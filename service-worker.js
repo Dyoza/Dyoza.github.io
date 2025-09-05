@@ -1,5 +1,5 @@
 /* Service Worker simple — cache app-shell + offline */
-const CACHE_VERSION = 'v1.0.0';
+const CACHE_VERSION = 'v1.0.1';
 const BASE = self.registration.scope; 
 // ex. 'https://<user>.github.io/transformation-app/' ou juste '/' si repo racine
 
