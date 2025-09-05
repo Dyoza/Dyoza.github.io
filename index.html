@@ -162,6 +162,18 @@ svg{display:block}
 /* Améliorations de lisibilité */
 .exo details{line-height:1.4}
 .table td, .table th{white-space:nowrap}
+/* --- Fix iPhone : modales au-dessus du header + fond inactif --- */
+header.sticky{ z-index: 10; }      /* le header reste sticky mais bas */
+.modal{ z-index: 9999; }           /* les modales passent au-dessus */
+.modal .box{ position: relative; z-index: 10000; } /* sécurité */
+
+body[data-modal-open="1"]{
+  overflow: hidden;                /* empêche le scroll du fond */
+  touch-action: none;
+}
+body[data-modal-open="1"] header.sticky{
+  pointer-events: none;            /* évite les clics fantômes sur le header */
+}
 </style>
 </head>
 <body>
@@ -830,7 +842,23 @@ if (navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chr
         .catch(console.error);
     });
   }
+// --- Overwrite safe des helpers modal pour gérer l'état global ---
+function openModal(m){
+  m.classList.add('open');
+  m.setAttribute('aria-hidden','false');
+  document.body.dataset.modalOpen = "1";   // bloque le fond sur mobile
+}
+
+function closeModal(m){
+  m.classList.remove('open');
+  m.setAttribute('aria-hidden','true');
+  // si plus aucune modale ouverte, on réactive le fond
+  if (![...document.querySelectorAll('.modal')].some(el=>el.classList.contains('open'))){
+    delete document.body.dataset.modalOpen;
+  }
+}
 </script>
 </body>
 </html>
+
 
