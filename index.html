@@ -3,6 +3,14 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0e1224">
+
+<!-- iOS (icône & statut barre) -->
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
 <title>Programme Hebdo v1.6 — Focus séance + Courses</title>
 <style>
 :root{
@@ -813,6 +821,16 @@ nav.addEventListener('click', (e)=>{
 if (navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome')) {
   console.log('Astuce: évite le mode Navigation privée sur iOS si tu veux garder les séries/check-ins (localStorage).');
 }
+// Enregistrement du service worker (PWA)
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      // si ton site est à https://<user>.github.io/transformation-app/,
+      // le SW doit être servi à la racine du dépôt :
+      navigator.serviceWorker.register('./service-worker.js')
+        .catch(console.error);
+    });
+  }
 </script>
 </body>
 </html>
+
