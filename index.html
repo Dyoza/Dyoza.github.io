@@ -3,26 +3,32 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Programme Hebdo v1.6.1 — Focus + Courses + PWA</title>
+
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0e1224">
-
-<!-- iOS (icône & statut barre) -->
 <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<title>Programme Hebdo v1.6 — Focus séance + Courses</title>
 <style>
 :root{
   --bg:#0e1224; --ink:#eef2ff; --muted:#a5b4fc; --card:#121735; --panel:#161d44; --border:#26306b;
   --accent:#7dd3fc; --ok:#22c55e; --warn:#f59e0b; --danger:#ef4444;
   --ring:0 0 0 2px rgba(125,211,252,.45);
+  --appbar-h: 84px; /* sera recalculé dynamiquement */
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:linear-gradient(180deg,#0e1224,#0a0f21 70%);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
 a{color:inherit}
 .wrap{max-width:1100px;margin:0 auto;padding:20px}
-header.sticky{position:sticky;top:0;z-index:10;background:rgba(14,18,36,.78);backdrop-filter:saturate(1.1) blur(8px);border-bottom:1px solid rgba(255,255,255,.07)}
+header.sticky{
+  position: fixed; top:0; left:0; right:0; z-index:1000;
+  background:rgba(14,18,36,.85); backdrop-filter:saturate(1.1) blur(8px);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  padding-top: env(safe-area-inset-top);
+}
+body{ padding-top: var(--appbar-h); }
 .headbar{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 20px}
 .brand{display:flex;gap:10px;align-items:center}
 .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 6px rgba(34,197,94,.25)}
@@ -46,8 +52,7 @@ header.sticky{position:sticky;top:0;z-index:10;background:rgba(14,18,36,.78);bac
 .sets{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .chk{display:flex;align-items:center;gap:6px;background:#0e1430;border:1px solid var(--border);border-radius:999px;padding:4px 8px}
 .chk input{accent-color:var(--ok);transform:scale(1.1)}
-.exo details{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:8px;border-radius:10px;margin-top:8px}
-.exo summary{cursor:pointer;font-weight:600}
+.exo details{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:8px;border-radius:10px;margin-top:8px;line-height:1.4}
 .rec{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:12px 0;border-top:1px dashed rgba(255,255,255,.08)}
 .rec:first-child{border-top:none}
 .tile{width:110px;height:110px;border-radius:14px;border:1px solid var(--border);background:radial-gradient(95px 75px at 60% 20%,rgba(125,211,252,.25),transparent 60%),linear-gradient(180deg,#151b3f,#0f1533)}
@@ -58,19 +63,22 @@ header.sticky{position:sticky;top:0;z-index:10;background:rgba(14,18,36,.78);bac
 .small{font-size:12px;color:#b5c0ff}
 hr.sep{border:none;border-top:1px dashed rgba(255,255,255,.1);margin:12px 0}
 footer{font-size:12px;color:#9fb0ff;opacity:.9;margin:18px 0}
+svg{display:block}
+
 /* Donut macros */
 .donut{position:relative;width:110px;height:110px}
-svg{display:block}
 .donut .mid{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#dfe6ff}
 .swatch{display:flex;gap:6px;align-items:center}
 .swatch::before{content:"";width:10px;height:10px;border-radius:2px;display:inline-block}
 .swatch.p::before{background:#60a5fa}.swatch.l::before{background:#f472b6}.swatch.g::before{background:#fbbf24}
-/* Modales (compléments, minuteur, badges, focus, courses) */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:18px}
+
+/* Modales > header + fond bloqué */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:18px;z-index:9999;will-change:transform}
 .modal.open{display:flex}
-.modal .box{max-width:900px;background:linear-gradient(180deg,#141a3a,#111633);border:1px solid var(--border);border-radius:16px;padding:16px;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.modal .box{max-width:900px;background:linear-gradient(180deg,#141a3a,#111633);border:1px solid var(--border);border-radius:16px;padding:16px;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.45);position:relative;z-index:10000}
 .mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:880px){.mod-grid{grid-template-columns:1fr}}
+
 /* Check-in */
 .form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:900px){.form{grid-template-columns:1fr}}
@@ -80,32 +88,36 @@ svg{display:block}
 }
 .range{accent-color:var(--accent);width:100%}
 .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
-.table th,.table td{border:1px solid rgba(255,255,255,.08);padding:6px 8px}
+.table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.table th,.table td{border:1px solid rgba(255,255,255,.08);padding:6px 8px;white-space:nowrap}
 .table th{background:rgba(255,255,255,.06);text-align:left}
 .warnbox{border-left:4px solid var(--warn);padding:8px;background:rgba(245,158,11,.08);border-radius:8px}
 .tip{font-size:13px;color:#cbd5ff}
+
 /* XP / Streak */
 .hud{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .level{font-weight:700}
 .xpbar{position:relative;width:220px;height:10px;border-radius:999px;background:#0e1430;border:1px solid var(--border);overflow:hidden}
 .xpbar>span{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#60a5fa,#22c55e);width:0%}
 .streak{display:inline-flex;gap:6px;align-items:center;padding:4px 10px;border:1px solid rgba(255,255,255,.12);border-radius:999px;color:#ffd29a}
-/* Minuteur (modale simple) */
+
+/* Minuteur */
 .timer{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px}
 .timer .display{font-weight:800;font-size:28px;letter-spacing:1px}
 .timer .tbtn{background:#0e1430;border:1px solid var(--border);color:var(--ink);padding:8px 10px;border-radius:10px;cursor:pointer}
 .timer .preset{display:flex;gap:8px;flex-wrap:wrap}
-/* FOCUS séance */
+
+/* Focus séance */
 .focusTitle{font-size:22px;margin:0}
 .focusMeta{color:#b9c1ff;margin:6px 0 10px}
 .fSet{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-.fSet .bubble{width:42px;height:42px;border-radius:999px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);background:#0e1430;font-weight:800;cursor:pointer}
+.fSet .bubble{width:48px;height:48px;border-radius:999px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);background:#0e1430;font-weight:800;cursor:pointer}
 .fSet .bubble.done{background:linear-gradient(180deg,#1f8b5f,#146a45)}
 .fNav{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:10px}
 .progress{font-size:13px;color:#cdd6ff}
 .focusTimer{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-.focusTimer button{background:#0e1430;border:1px solid var(--border);color:var(--ink);padding:6px 10px;border-radius:10px;cursor:pointer}
+.focusTimer button{background:#0e1430;border:1px solid var(--border);color:var(--ink);padding:8px 10px;border-radius:10px;cursor:pointer}
+
 /* Courses */
 .gbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
 .switch{display:flex;align-items:center;gap:6px}
@@ -117,63 +129,38 @@ svg{display:block}
 .item:first-child{border-top:none}
 .item input{transform:scale(1.1);accent-color:var(--ok)}
 .item .qty{font-size:12px;color:#b9c1ff}
-/* ===== iPhone / petits écrans ===== */
+
+/* Mobile friendly (iPhone) */
 @supports(padding: env(safe-area-inset-top)) {
   header.sticky { padding-top: env(safe-area-inset-top); }
   footer       { padding-bottom: env(safe-area-inset-bottom); }
 }
-
-@media (max-width: 768px){
-  .wrap{padding:16px}
-  .grid{grid-template-columns:1fr}            /* exos au-dessus, recettes dessous */
-  .card{padding:14px;border-radius:14px}
-  .section-title h2{font-size:18px}
-  .exo h3{font-size:16px}
-  .meta,.note,.small{font-size:13px}
-  .btn{padding:10px 12px}
-  .chk input{transform:scale(1.2)}           /* cases + grandes pour le doigt */
-  .tile{width:96px;height:96px}
-  .donut{transform:scale(.9);transform-origin:top left}
-  .table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
-}
-
-/* Barre des jours → carrousel tactile */
 @media (max-width: 900px){
   .days{display:flex !important;gap:8px;overflow-x:auto;padding:8px 12px 14px}
   .days::-webkit-scrollbar{display:none}
   .days button{flex:0 0 auto;min-width:68px;padding:10px 12px}
 }
-
-/* Modales mieux ajustées */
+@media (max-width: 768px){
+  .wrap{padding:16px}
+  .grid{grid-template-columns:1fr}
+  .card{padding:14px;border-radius:14px}
+  .section-title h2{font-size:18px}
+  .exo h3{font-size:16px}
+  .meta,.note,.small{font-size:13px}
+  .btn{padding:10px 12px}
+  .chk input{transform:scale(1.2)}
+  .tile{width:96px;height:96px}
+  .donut{transform:scale(.9);transform-origin:top left}
+}
 @media (max-width: 480px){
   .modal .box{max-width:95vw;padding:12px}
   .mod-grid{grid-template-columns:1fr}
-  .fSet .bubble{width:48px;height:48px}      /* bulles Focus plus grandes */
   .timer .display{font-size:24px}
 }
 
-/* Focus : texte + lisible sur mobile */
-@media (max-width: 430px){
-  .focusTitle{font-size:20px}
-  .focusMeta{font-size:13px}
-  .focusTimer button{padding:8px 10px}
-}
-
-/* Améliorations de lisibilité */
-.exo details{line-height:1.4}
-.table td, .table th{white-space:nowrap}
-/* --- Fix iPhone : modales au-dessus du header + fond inactif --- */
-header.sticky{ z-index: 10; }      /* le header reste sticky mais bas */
-.modal{ z-index: 9999; }           /* les modales passent au-dessus */
-.modal .box{ position: relative; z-index: 10000; } /* sécurité */
-
-body[data-modal-open="1"]{
-  overflow: hidden;                /* empêche le scroll du fond */
-  touch-action: none;
-}
-body[data-modal-open="1"] header.sticky{
-  pointer-events: none;            /* évite les clics fantômes sur le header */
-}
+/* État global quand une modale est ouverte */
+body[data-modal-open="1"]{overflow:hidden;touch-action:none}
+body[data-modal-open="1"] header.sticky{pointer-events:none}
 </style>
 </head>
 <body>
@@ -208,12 +195,23 @@ body[data-modal-open="1"] header.sticky{
 </header>
 
 <main class="wrap">
-  <!-- JOURS — exos à gauche / recettes à droite -->
+  <!-- Jour 1 -->
   <section class="day" data-day="1">
     <div class="grid">
       <article class="card">
         <div class="section-title"><h2>Jour 1 — Full-Body A (45–60’)</h2><span class="tag">Force de base + technique</span></div>
-        <div class="exo"><div><h3>Goblet Squat</h3><p class="meta">4×8–12 • RPE 7–8 • Tempo 3–1–2 • Repos 90s</p><details><summary>Comment faire</summary><ul class="note"><li>Pieds largeur épaules, haltère collé au torse.</li><li>Descends 3s (cuisses //), stop 1s, remonte 2s.</li><li>Genoux dans l’axe, talons au sol, abdos gainés.</li></ul></details></div><div class="sets" data-sets="4" data-key="d1-goblet"></div></div>
+
+        <div class="exo">
+          <div>
+            <h3>Goblet Squat</h3>
+            <p class="meta">4×8–12 • RPE 7–8 • Tempo 3–1–2 • Repos 90s</p>
+            <details><summary>Comment faire</summary>
+              <ul class="note"><li>Pieds largeur épaules, haltère collé au torse.</li><li>Descends 3s (cuisses //), stop 1s, remonte 2s.</li><li>Genoux dans l’axe, talons au sol, abdos gainés.</li></ul>
+            </details>
+          </div>
+          <div class="sets" data-sets="4" data-key="d1-goblet"></div>
+        </div>
+
         <div class="exo"><div><h3>Développé couché haltères</h3><p class="meta">4×8–12 • Tempo 2–1–2 • Repos 90s</p></div><div class="sets" data-sets="4" data-key="d1-bench"></div></div>
         <div class="exo"><div><h3>Tractions assistées / négatives</h3><p class="meta">5×3–5 • Tempo 0–1–5 • Repos 90s</p></div><div class="sets" data-sets="5" data-key="d1-pullups"></div></div>
         <div class="exo"><div><h3>RDL — haltères</h3><p class="meta">3×10–12 • Tempo 3–1–2 • Repos 90s</p></div><div class="sets" data-sets="3" data-key="d1-rdl"></div></div>
@@ -223,8 +221,27 @@ body[data-modal-open="1"] header.sticky{
 
       <article class="card">
         <div class="section-title"><h2>Repas du jour (2 au choix)</h2><span class="tag">Cible : ~170–190 g prots/j</span></div>
-        <div class="rec"><div class="tile"><div class="donut" data-p="55" data-l="12" data-g="35" data-k="510"></div></div><div><h3>Salade poulet croquante (≈15’)</h3><p class="note">Poulet 180 g • salade • tomate • concombre • maïs 60 g • yaourt 0% 150 g • citron • herbes.</p><div class="kpi"><span class="pill">~510 kcal</span><span class="pill">P 55 g</span><span class="pill">L 12 g</span><span class="pill">G 35 g</span></div><hr class="sep"/><p class="small">Étapes : saisir le poulet, mélanger légumes + yaourt + citron + herbes, ajouter le poulet.</p></div></div>
-        <div class="rec"><div class="tile"><div class="donut" data-p="45" data-l="16" data-g="60" data-k="600"></div></div><div><h3>Chili express (batch 2 portions)</h3><p class="note">Bœuf 5% 300 g • haricots rouges 240 g • tomate 400 g • oignon • épices.</p><div class="kpi"><span class="pill">~600 kcal/portion</span><span class="pill">P 45 g</span><span class="pill">L 16 g</span><span class="pill">G 60 g</span></div><hr class="sep"/><p class="small">Suer oignon+épices → saisir bœuf → ajouter tomate+haricots → mijoter 15–20’.</p></div></div>
+
+        <div class="rec">
+          <div class="tile"><div class="donut" data-p="55" data-l="12" data-g="35" data-k="510"></div></div>
+          <div>
+            <h3>Salade poulet croquante (≈15’)</h3>
+            <p class="note">Poulet 180 g • salade • tomate • concombre • maïs 60 g • yaourt 0% 150 g • citron • herbes.</p>
+            <div class="kpi"><span class="pill">~510 kcal</span><span class="pill">P 55 g</span><span class="pill">L 12 g</span><span class="pill">G 35 g</span></div>
+            <hr class="sep"/><p class="small">Étapes : saisir le poulet, mélanger légumes + yaourt + citron + herbes, ajouter le poulet.</p>
+          </div>
+        </div>
+
+        <div class="rec">
+          <div class="tile"><div class="donut" data-p="45" data-l="16" data-g="60" data-k="600"></div></div>
+          <div>
+            <h3>Chili express (batch 2 portions)</h3>
+            <p class="note">Bœuf 5% 300 g • haricots rouges 240 g • tomate 400 g • oignon • épices.</p>
+            <div class="kpi"><span class="pill">~600 kcal/portion</span><span class="pill">P 45 g</span><span class="pill">L 16 g</span><span class="pill">G 60 g</span></div>
+            <hr class="sep"/><p class="small">Suer oignon+épices → saisir bœuf → ajouter tomate+haricots → mijoter 15–20’.</p>
+          </div>
+        </div>
+
         <p class="note">Règle : 30–45 g de protéines/repas • légumes à volonté • eau 3–4 L.</p>
       </article>
     </div>
@@ -377,10 +394,10 @@ body[data-modal-open="1"] header.sticky{
 </main>
 
 <footer class="wrap">
-  <p>Mode Focus pour l’entraînement, Courses pour l’organisation. Check-in prêt (20–22 h). Let’s go.</p>
+  <p>App-bar fixe, Focus & Courses prêts. Check-in (20–22 h) intégré. PWA active.</p>
 </footer>
 
-<!-- Fenêtre Compléments -->
+<!-- Modales : Compléments, Minuteur, Badges, Focus, Courses -->
 <div class="modal" id="modalSupp" aria-hidden="true">
   <div class="box">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px">
@@ -399,7 +416,6 @@ body[data-modal-open="1"] header.sticky{
   </div>
 </div>
 
-<!-- Minuteur -->
 <div class="modal" id="modalTimer" aria-hidden="true">
   <div class="box">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px">
@@ -420,7 +436,6 @@ body[data-modal-open="1"] header.sticky{
   </div>
 </div>
 
-<!-- Badges -->
 <div class="modal" id="modalBadges" aria-hidden="true">
   <div class="box">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px">
@@ -431,20 +446,16 @@ body[data-modal-open="1"] header.sticky{
   </div>
 </div>
 
-<!-- Focus séance -->
 <div class="modal" id="modalFocus" aria-hidden="true">
   <div class="box" style="max-width:760px">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px">
       <h2 class="focusTitle">Focus — <span id="fDay">Jour ?</span></h2>
       <button class="btn" id="closeFocus">Fermer</button>
     </div>
-    <div id="fBody">
-      <!-- rendu dynamique -->
-    </div>
+    <div id="fBody"></div>
   </div>
 </div>
 
-<!-- Courses -->
 <div class="modal" id="modalGroceries" aria-hidden="true">
   <div class="box">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px">
@@ -472,10 +483,12 @@ nav.addEventListener('click',e=>{
   const d=e.target.getAttribute('data-day');
   btns.forEach(b=>b.classList.toggle('active',b===e.target));
   days.forEach(sec=>sec.hidden = sec.getAttribute('data-day')!==d);
-  window.scrollTo({top:0,behavior:'smooth'});
+  // recentre l'onglet cliqué et remonte sous le header fixe
+  try{ e.target.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'}); }catch{}
+  window.scrollTo({ top: 0 });
 });
 
-/* ===== XP / HUD ===== */
+/* ===== HUD / XP ===== */
 function getDB(){ try{return JSON.parse(localStorage.getItem('xpdb_v1')||'{}')}catch{return{}} }
 function setDB(db){ localStorage.setItem('xpdb_v1', JSON.stringify(db)) }
 function addXP(amount){
@@ -491,12 +504,7 @@ function addXP(amount){
   }
   setDB(db); renderHUD();
 }
-function renderHUD(){
-  const db=getDB(); const xp=db.xp||0; const lvl=Math.floor(xp/100)+1; const pct=(xp%100);
-  document.getElementById('level').textContent=lvl;
-  document.getElementById('xpfill').style.width=`${pct}%`;
-  document.getElementById('streak').textContent=db.streak||0;
-}
+function renderHUD(){ const db=getDB(); const xp=db.xp||0; const lvl=Math.floor(xp/100)+1; const pct=(xp%100); document.getElementById('level').textContent=lvl; document.getElementById('xpfill').style.width=`${pct}%`; document.getElementById('streak').textContent=db.streak||0; }
 renderHUD();
 
 /* ===== SÉRIES (persistantes) ===== */
@@ -520,6 +528,7 @@ function renderSets(){
   });
 }
 renderSets();
+
 document.getElementById('btnReset').addEventListener('click',()=>{
   const current = btns.find(b=>b.classList.contains('active')).getAttribute('data-day');
   document.querySelectorAll(`section.day[data-day="${current}"] .sets`).forEach(box=>{
@@ -537,12 +546,9 @@ function createDonut(el){
     <svg viewBox="0 0 120 120" width="110" height="110" aria-hidden="true">
       <circle cx="60" cy="60" r="50" stroke="#0c1330" stroke-width="16" fill="none"/>
       <g transform="rotate(-90 60 60)">
-        <circle cx="60" cy="60" r="50" stroke="#60a5fa" stroke-width="16" fill="none"
-          stroke-dasharray="${(p/100)*C} ${C}" stroke-dashoffset="0"/>
-        <circle cx="60" cy="60" r="50" stroke="#f472b6" stroke-width="16" fill="none"
-          stroke-dasharray="${(l/100)*C} ${C}" stroke-dashoffset="-${(p/100)*C}"/>
-        <circle cx="60" cy="60" r="50" stroke="#fbbf24" stroke-width="16" fill="none"
-          stroke-dasharray="${(g/100)*C} ${C}" stroke-dashoffset="-${((p+l)/100)*C}"/>
+        <circle cx="60" cy="60" r="50" stroke="#60a5fa" stroke-width="16" fill="none" stroke-dasharray="${(p/100)*C} ${C}" stroke-dashoffset="0"/>
+        <circle cx="60" cy="60" r="50" stroke="#f472b6" stroke-width="16" fill="none" stroke-dasharray="${(l/100)*C} ${C}" stroke-dashoffset="-${(p/100)*C}"/>
+        <circle cx="60" cy="60" r="50" stroke="#fbbf24" stroke-width="16" fill="none" stroke-dasharray="${(g/100)*C} ${C}" stroke-dashoffset="-${((p+l)/100)*C}"/>
       </g>
     </svg>`;
   el.innerHTML = svg + `<div class="mid">${K}<br><span style="font-size:11px;color:#bcd0ff">kcal</span></div>`;
@@ -556,16 +562,24 @@ function createDonut(el){
 }
 document.querySelectorAll('.donut').forEach(createDonut);
 
-/* ===== MODALES génériques ===== */
-function openModal(m){m.classList.add('open'); m.setAttribute('aria-hidden','false')}
-function closeModal(m){m.classList.remove('open'); m.setAttribute('aria-hidden','true')}
+/* ===== HELPERS MODALES (avec blocage du fond) ===== */
+function openModal(m){
+  m.classList.add('open'); m.setAttribute('aria-hidden','false');
+  document.body.dataset.modalOpen = "1";
+}
+function closeModal(m){
+  m.classList.remove('open'); m.setAttribute('aria-hidden','true');
+  if (![...document.querySelectorAll('.modal')].some(el=>el.classList.contains('open'))){
+    delete document.body.dataset.modalOpen;
+  }
+}
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ document.querySelectorAll('.modal.open').forEach(closeModal) }});
 
 /* ===== COMPLÉMENTS ===== */
-const modal=document.getElementById('modalSupp');
-document.getElementById('btnSupp').addEventListener('click',()=>openModal(modal));
-document.getElementById('closeSupp').addEventListener('click',()=>closeModal(modal));
-modal.addEventListener('click',e=>{if(e.target===modal) closeModal(modal)});
+const modalSupp=document.getElementById('modalSupp');
+document.getElementById('btnSupp').addEventListener('click',()=>openModal(modalSupp));
+document.getElementById('closeSupp').addEventListener('click',()=>closeModal(modalSupp));
+modalSupp.addEventListener('click',e=>{if(e.target===modalSupp) closeModal(modalSupp)});
 
 /* ===== MINUTEUR ===== */
 const modalTimer=document.getElementById('modalTimer');
@@ -690,18 +704,15 @@ function focusRender(){
       <button class="btn" id="fNext">${doneCount===ex.sets?'Suivant →':'Suivant (après séries)'} </button>
     </div>
   `;
-  // bulles séries
   const holder=d.getElementById('fSet');
   for(let i=0;i<ex.sets;i++){
     const b=d.createElement('div'); b.className='bubble'+(doneArr[i]?' done':''); b.textContent=i+1;
     b.addEventListener('click',()=>{ doneArr[i]=!doneArr[i]; setSetState(ex.key,doneArr); addXP(5); focusRender(); });
     holder.appendChild(b);
   }
-  // boutons
   d.getElementById('fPrev').onclick=()=>{ if(FCTX.idx>0){FCTX.idx--; focusRender();} }
   d.getElementById('fNext').onclick=()=>{ if(doneArr.every(Boolean) && FCTX.idx<FCTX.exos.length-1){FCTX.idx++; focusRender();} else if(!doneArr.every(Boolean)){ alert('Valide toutes les séries avant de passer au suivant.'); } else { closeModal(modalFocus); alert('Séance terminée. GG !'); } }
   d.getElementById('fResetExo').onclick=()=>{ setSetState(ex.key, new Array(ex.sets).fill(false)); focusRender(); }
-  // minuteur inline
   fBody.querySelectorAll('.focusTimer button[data-sec]').forEach(b=>b.addEventListener('click',()=>{ setTime(+b.dataset.sec); openModal(modalTimer); }));
   d.getElementById('fNextSet').onclick=()=>{
     const i=doneArr.findIndex(v=>!v);
@@ -716,7 +727,6 @@ document.getElementById('btnFocus').addEventListener('click',()=>{
 });
 document.getElementById('closeFocus').addEventListener('click',()=>closeModal(modalFocus));
 modalFocus.addEventListener('click',e=>{ if(e.target===modalFocus) closeModal(modalFocus) });
-// Raccourcis clavier en focus
 document.addEventListener('keydown',e=>{
   if(!modalFocus.classList.contains('open')) return;
   if(e.key==='ArrowRight') { d.getElementById('fNext')?.click(); }
@@ -731,7 +741,7 @@ document.getElementById('closeGroceries').addEventListener('click',()=>closeModa
 modalGroceries.addEventListener('click',e=>{ if(e.target===modalGroceries) closeModal(modalGroceries) });
 
 const gListEl=document.getElementById('gList');
-const gTravel=d.getElementById('gTravel');
+const gTravel=document.getElementById('gTravel');
 const gKey='groceries_v1';
 const gStateKey='groceries_state_v1';
 function baseGroceries(){
@@ -797,7 +807,7 @@ function baseGroceries(){
 function loadGState(){ try{return JSON.parse(localStorage.getItem(gStateKey)||'{}')}catch{return{}} }
 function saveGState(s){ localStorage.setItem(gStateKey, JSON.stringify(s)) }
 function renderGroceries(){
-  const state=loadGState(); gTravel.checked=!!state.travel; // restore toggle
+  const state=loadGState(); gTravel.checked=!!state.travel;
   const data=baseGroceries();
   gListEl.innerHTML='';
   const checked=JSON.parse(localStorage.getItem(gKey)||'{}');
@@ -821,44 +831,25 @@ document.getElementById('gNone').addEventListener('click',()=>{ const boxes=[...
 document.getElementById('gCopy').addEventListener('click',()=>{ const lines=[]; gListEl.querySelectorAll('.gcat').forEach(cat=>{ const title=cat.querySelector('h3').textContent; const items=[...cat.querySelectorAll('.item')].filter(i=>i.querySelector('input').checked).map(i=>'- '+i.querySelector('label').textContent.trim()); if(items.length){ lines.push(title); lines.push(...items,''); } }); const txt=lines.join('\n'); navigator.clipboard.writeText(txt).then(()=>alert('Liste copiée.')); });
 document.getElementById('gExport').addEventListener('click',()=>{ const lines=[]; gListEl.querySelectorAll('.gcat').forEach(cat=>{ const title=cat.querySelector('h3').textContent; const items=[...cat.querySelectorAll('.item')].filter(i=>i.querySelector('input').checked).map(i=>'- '+i.querySelector('label').textContent.trim()); if(items.length){ lines.push(title); lines.push(...items,''); } }); const txt=lines.join('\n'); const blob=new Blob([txt],{type:'text/plain;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=d.createElement('a'); a.href=url; a.download='courses.txt'; a.click(); URL.revokeObjectURL(url); });
 
-/* ===== FIN UTIL ===== */
-// Centrer le jour sélectionné dans la barre horizontale (iPhone)
-nav.addEventListener('click', (e)=>{
-  if(e.target.tagName==='BUTTON'){
-    try{ e.target.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'}); }catch{}
+/* ===== App-bar : offset dynamique ===== */
+(function appbarOffset(){
+  const header = document.querySelector('header.sticky');
+  if(!header) return;
+  function setOffset(){
+    const h = header.getBoundingClientRect().height;
+    document.documentElement.style.setProperty('--appbar-h', h + 'px');
   }
-});
+  window.addEventListener('load', setOffset, {once:true});
+  window.addEventListener('resize', setOffset);
+  try{ new ResizeObserver(setOffset).observe(header); }catch{}
+})();
 
-// Éviter les pertes d'état : rappeler à l’utilisateur d’éviter la navigation privée iOS
-if (navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome')) {
-  console.log('Astuce: évite le mode Navigation privée sur iOS si tu veux garder les séries/check-ins (localStorage).');
-}
-// Enregistrement du service worker (PWA)
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      // si ton site est à https://<user>.github.io/transformation-app/,
-      // le SW doit être servi à la racine du dépôt :
-      navigator.serviceWorker.register('./service-worker.js')
-        .catch(console.error);
-    });
-  }
-// --- Overwrite safe des helpers modal pour gérer l'état global ---
-function openModal(m){
-  m.classList.add('open');
-  m.setAttribute('aria-hidden','false');
-  document.body.dataset.modalOpen = "1";   // bloque le fond sur mobile
-}
-
-function closeModal(m){
-  m.classList.remove('open');
-  m.setAttribute('aria-hidden','true');
-  // si plus aucune modale ouverte, on réactive le fond
-  if (![...document.querySelectorAll('.modal')].some(el=>el.classList.contains('open'))){
-    delete document.body.dataset.modalOpen;
-  }
+/* ===== PWA: enregistrement SW ===== */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(console.error);
+  });
 }
 </script>
 </body>
 </html>
-
-
