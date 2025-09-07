@@ -173,9 +173,13 @@ svg{display:block}
 /* Quand une modale est ouverte, pas de scroll ni clics de fond */
 body[data-modal-open="1"]{overflow:hidden;touch-action:none}
 body[data-modal-open="1"] header.sticky{pointer-events:none}
-</style>
+/* --- Mode EN-TÊTE STATIQUE (défile avec la page) --- */
+body.static-header header.sticky { position: static; }
+body.static-header { padding-top: 0 !important; } /* supprime l'espace réservé au header fixe */
+
+</>
 </head>
-<body>
+<body class="static-header">
 <header class="sticky">
   <div class="headbar">
     <div class="brand"><span class="dot"></span><strong>Transformation — Semaine type (utilisable)</strong></div>
@@ -868,3 +872,4 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
