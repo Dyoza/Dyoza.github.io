@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>Programme Hebdo v1.6.2 — Focus + Courses + PWA</title>
+<title>Programme Hebdo v1.6.3 — Header Fixe + PWA</title>
 
 <!-- PWA -->
 <link rel="manifest" href="manifest.webmanifest">
@@ -23,20 +23,17 @@
 html,body{margin:0;background:linear-gradient(180deg,#0e1224,#0a0f21 70%);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
 a{color:inherit}
 
-/* App-bar (header) */
+/* === EN-TÊTE FIXE (simple & robuste) === */
 header.sticky{
-  position: fixed; top:0; left:0; right:0; z-index:1000;
-  background:rgba(14,18,36,.85); backdrop-filter:saturate(1.1) blur(8px);
+  position: fixed; top:0; left:0; right:0; width:100%;
+  z-index:1000;
+  background:rgba(14,18,36,.85);
+  backdrop-filter:saturate(1.1) blur(8px);
   border-bottom:1px solid rgba(255,255,255,.07);
   padding-top: env(safe-area-inset-top);
-  transition: transform .25s ease, opacity .2s ease;
-  transform: translateZ(0);
+  transform: translateZ(0); /* solidifie sur iOS */
 }
-body{ padding-top: var(--appbar-h); }
-
-/* Auto-hide : quand caché sur mobile, on remonte le header et on supprime le padding-top */
-body.appbar-hidden header.sticky{ transform: translateY(calc(-1 * var(--appbar-h))); }
-body.appbar-hidden{ padding-top: 0 !important; }
+body{ padding-top: var(--appbar-h); } /* évite le chevauchement du contenu */
 
 .wrap{max-width:1100px;margin:0 auto;padding:20px}
 .headbar{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 20px}
@@ -305,7 +302,7 @@ body[data-modal-open="1"] header.sticky{pointer-events:none}
     <div class="grid">
       <article class="card">
         <div class="section-title"><h2>Jour 4 — Repos actif (20–30’)</h2><span class="tag">Mobilité & récup</span></div>
-        <ul class="note"><li>Marche 20–30’ + 10’ mobilité (chevilles, hanches, thoracique).</li><li>Respiration 4-7-8 (3–5 cycles) le soir pour un réveil + facile.</li></ul>
+        <ul class="note"><li>Marche 20–30’ + 10’ mobilité (chevilles, hanches, thoracique).</li><li>Respiration 4-7-8 (3–5 cycles) le soir.</li></ul>
       </article>
       <article class="card">
         <h2>Snacks intelligents</h2>
@@ -358,7 +355,7 @@ body[data-modal-open="1"] header.sticky{pointer-events:none}
       </article>
       <article class="card">
         <h2>Rappel simple</h2>
-        <ul class="note"><li>Progression : haut de la fourchette à RPE ≤8 → +1–2 reps ou +2 kg séance suivante.</li><li>Sommeil 7–8 h. Lever simple : lumière, eau, 5’ de marche.</li><li>Tabac : −5 cigarettes/sem.</li></ul>
+        <ul class="note"><li>Progression : RPE ≤8 → +1–2 reps ou +2 kg séance suivante.</li><li>Sommeil 7–8 h. Lever simple : lumière, eau, 5’ de marche.</li><li>Tabac : −5 cigarettes/sem.</li></ul>
       </article>
     </div>
   </section>
@@ -409,7 +406,7 @@ body[data-modal-open="1"] header.sticky{pointer-events:none}
 </main>
 
 <footer class="wrap">
-  <p>Desktop : en-tête visible. Mobile : auto-hide intelligent. PWA active. Let’s go.</p>
+  <p>En-tête fixe en permanence. PWA active. Utilise les modales Focus/Minuteur/Courses/Compléments au besoin.</p>
 </footer>
 
 <!-- MODALES -->
@@ -423,10 +420,10 @@ body[data-modal-open="1"] header.sticky{pointer-events:none}
     <div class="mod-grid">
       <div class="card"><h3>Whey (protéine)</h3><ul class="note"><li><b>Dose :</b> 25–35 g/prise pour atteindre 170–190 g prot./jour.</li><li><b>Timing :</b> post-séance ou collation.</li><li><b>Astuce :</b> eau/lait 0% ou dans un yaourt/skyr.</li></ul></div>
       <div class="card"><h3>Créatine (monohydrate)</h3><ul class="note"><li><b>Dose :</b> 3–5 g <b>quotidien</b>.</li><li><b>Timing :</b> quand tu veux, idéalement avec un repas.</li><li><b>Effets :</b> force, puissance, volume.</li><li><b>Sécurité :</b> bonne hydratation ; éviter si pathologie rénale connue.</li></ul></div>
-      <div class="card"><h3>Oméga-3 (EPA+DHA)</h3><ul class="note"><li><b>Dose :</b> 1–2 g d’EPA+DHA/j (tu manges peu de poisson).</li><li><b>Timing :</b> au repas.</li><li><b>Bénéfices :</b> cœur, inflammation, récup.</li></ul></div>
-      <div class="card"><h3>Vitamine D3</h3><ul class="note"><li><b>Dose :</b> 1000–2000 UI/j (idéal après dosage sanguin).</li><li><b>Timing :</b> avec un peu de lipides.</li></ul></div>
+      <div class="card"><h3>Oméga-3 (EPA+DHA)</h3><ul class="note"><li><b>Dose :</b> 1–2 g d’EPA+DHA/j.</li><li><b>Timing :</b> au repas.</li><li><b>Bénéfices :</b> cœur, inflammation, récup.</li></ul></div>
+      <div class="card"><h3>Vitamine D3</h3><ul class="note"><li><b>Dose :</b> 1000–2000 UI/j.</li><li><b>Timing :</b> avec un peu de lipides.</li></ul></div>
       <div class="card"><h3>Magnésium (glycinate)</h3><ul class="note"><li><b>Dose :</b> 200–400 mg le soir.</li><li><b>Bénéfices :</b> sommeil, stress, crampes.</li></ul></div>
-      <div class="card"><h3>Collagène (type I/III)</h3><ul class="note"><li><b>Dose :</b> 10 g/j (jusqu’à 15 g si tendons/articulations sollicités).</li><li><b>Timing :</b> petit-déj. ou 30–60 min pré-séance + <b>vitamine C</b>.</li><li><b>Bénéfices :</b> tendons/ligaments, peau, ongles.</li></ul></div>
+      <div class="card"><h3>Collagène (type I/III)</h3><ul class="note"><li><b>Dose :</b> 10 g/j (jusqu’à 15 g si tendons sollicités).</li><li><b>Timing :</b> matin ou 30–60 min pré-séance + <b>vitamine C</b>.</li><li><b>Bénéfices :</b> tendons/ligaments, peau, ongles.</li></ul></div>
     </div>
   </div>
 </div>
@@ -498,7 +495,7 @@ nav.addEventListener('click',e=>{
   const d=e.target.getAttribute('data-day');
   btns.forEach(b=>b.classList.toggle('active',b===e.target));
   days.forEach(sec=>sec.hidden = sec.getAttribute('data-day')!==d);
-  // recentre l'onglet cliqué et remonte sous le header (utile sur iOS)
+  // recentre l'onglet et remonte sous le header fixe
   try{ e.target.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'}); }catch{}
   window.scrollTo({ top: 0 });
 });
@@ -581,8 +578,6 @@ document.querySelectorAll('.donut').forEach(createDonut);
 function openModal(m){
   m.classList.add('open'); m.setAttribute('aria-hidden','false');
   document.body.dataset.modalOpen = "1";
-  // Affiche l'app-bar pendant les modales
-  document.body.classList.remove('appbar-hidden');
 }
 function closeModal(m){
   m.classList.remove('open'); m.setAttribute('aria-hidden','true');
@@ -848,7 +843,7 @@ document.getElementById('gNone').addEventListener('click',()=>{ const boxes=[...
 document.getElementById('gCopy').addEventListener('click',()=>{ const lines=[]; gListEl.querySelectorAll('.gcat').forEach(cat=>{ const title=cat.querySelector('h3').textContent; const items=[...cat.querySelectorAll('.item')].filter(i=>i.querySelector('input').checked).map(i=>'- '+i.querySelector('label').textContent.trim()); if(items.length){ lines.push(title); lines.push(...items,''); } }); const txt=lines.join('\n'); navigator.clipboard.writeText(txt).then(()=>alert('Liste copiée.')); });
 document.getElementById('gExport').addEventListener('click',()=>{ const lines=[]; gListEl.querySelectorAll('.gcat').forEach(cat=>{ const title=cat.querySelector('h3').textContent; const items=[...cat.querySelectorAll('.item')].filter(i=>i.querySelector('input').checked).map(i=>'- '+i.querySelector('label').textContent.trim()); if(items.length){ lines.push(title); lines.push(...items,''); } }); const txt=lines.join('\n'); const blob=new Blob([txt],{type:'text/plain;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=d.createElement('a'); a.href=url; a.download='courses.txt'; a.click(); URL.revokeObjectURL(url); });
 
-/* ===== Offset dynamique de l’app-bar ===== */
+/* ===== Offset dynamique de l’app-bar (hauteur réelle) ===== */
 (function appbarOffset(){
   const header = document.querySelector('header.sticky');
   if(!header) return;
@@ -862,48 +857,6 @@ document.getElementById('gExport').addEventListener('click',()=>{ const lines=[]
   window.addEventListener('orientationchange', setSoon);
   document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) setSoon(); });
   try{ new ResizeObserver(setOffset).observe(header); }catch{}
-})();
-
-/* ===== Auto-hide mobile (≤ 900px) ===== */
-(function appbarAutoHide(){
-  const header = document.querySelector('header.sticky');
-  if(!header) return;
-
-  let lastY = window.scrollY;
-  let enabled = window.matchMedia('(max-width: 900px)').matches;
-
-  function showBar(){ document.body.classList.remove('appbar-hidden'); }
-  function hideBar(){ document.body.classList.add('appbar-hidden'); }
-
-  function onScroll(){
-    if (!enabled) return;
-    if (document.body.dataset.modalOpen === "1") { showBar(); return; }
-    const y = window.scrollY;
-    const goingDown = y > lastY && y > 80;
-    const goingUp   = y < lastY;
-    if (goingDown) hideBar();
-    else if (goingUp || y < 40) showBar();
-    lastY = y;
-  }
-  window.addEventListener('scroll', onScroll, {passive:true});
-  window.addEventListener('resize', ()=>{
-    enabled = window.matchMedia('(max-width: 900px)').matches;
-    if(!enabled) showBar();
-    const evt=new Event('orientationchange'); window.dispatchEvent(evt);
-  });
-  window.addEventListener('orientationchange', ()=>{ setTimeout(()=>{ showBar(); }, 0); });
-  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden){ setTimeout(()=>{ showBar(); }, 0); }});
-
-  // Interactions qui doivent toujours révéler la barre
-  ['click','pointerdown','touchstart'].forEach(evt=>{
-    document.getElementById('nav')?.addEventListener(evt, showBar, {passive:true});
-  });
-  document.querySelectorAll('header .actions .btn').forEach(b=>{
-    ['click','pointerdown','touchstart'].forEach(evt=> b.addEventListener(evt, showBar, {passive:true}));
-  });
-
-  // Init
-  setTimeout(()=>{ showBar(); }, 0);
 })();
 
 /* ===== PWA: enregistrement SW ===== */
