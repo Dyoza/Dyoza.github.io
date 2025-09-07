@@ -1,5 +1,5 @@
 /* Service Worker — cache app-shell + offline */
-const CACHE_VERSION = 'v1.0.2';
+const CACHE_VERSION = 'v1.0.3';
 const BASE = self.registration.scope;
 
 const ASSETS = [
