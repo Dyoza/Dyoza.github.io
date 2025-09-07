@@ -2,9 +2,10 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Programme Hebdo v1.6.1 — Focus + Courses + PWA</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Programme Hebdo v1.6.2 — Focus + Courses + PWA</title>
 
+<!-- PWA -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0e1224">
 <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
@@ -16,35 +17,52 @@
   --bg:#0e1224; --ink:#eef2ff; --muted:#a5b4fc; --card:#121735; --panel:#161d44; --border:#26306b;
   --accent:#7dd3fc; --ok:#22c55e; --warn:#f59e0b; --danger:#ef4444;
   --ring:0 0 0 2px rgba(125,211,252,.45);
-  --appbar-h: 84px; /* sera recalculé dynamiquement */
+  --appbar-h: 84px; /* recalculée dynamiquement */
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:linear-gradient(180deg,#0e1224,#0a0f21 70%);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
 a{color:inherit}
-.wrap{max-width:1100px;margin:0 auto;padding:20px}
+
+/* App-bar (header) */
 header.sticky{
   position: fixed; top:0; left:0; right:0; z-index:1000;
   background:rgba(14,18,36,.85); backdrop-filter:saturate(1.1) blur(8px);
   border-bottom:1px solid rgba(255,255,255,.07);
   padding-top: env(safe-area-inset-top);
+  transition: transform .25s ease, opacity .2s ease;
+  transform: translateZ(0);
 }
 body{ padding-top: var(--appbar-h); }
+
+/* Auto-hide : quand caché sur mobile, on remonte le header et on supprime le padding-top */
+body.appbar-hidden header.sticky{ transform: translateY(calc(-1 * var(--appbar-h))); }
+body.appbar-hidden{ padding-top: 0 !important; }
+
+.wrap{max-width:1100px;margin:0 auto;padding:20px}
 .headbar{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 20px}
 .brand{display:flex;gap:10px;align-items:center}
 .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 6px rgba(34,197,94,.25)}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 .btn{background:var(--panel);border:1px solid var(--border);color:var(--ink);padding:8px 10px;border-radius:10px;cursor:pointer}
 .btn:hover{outline:var(--ring)}
+
+/* Onglets jours */
 .days{display:grid;grid-template-columns:repeat(9,1fr);gap:8px;padding:8px 20px 14px}
 .days button{border:1px solid var(--border);background:var(--card);color:var(--ink);padding:8px;border-radius:10px;cursor:pointer;font-weight:700}
 .days button.active{background:linear-gradient(180deg,#1a2146,#121838);outline:var(--ring)}
+
+/* Colonnes */
 .grid{display:grid;grid-template-columns:1.1fr 1fr;gap:16px}
 @media(max-width:950px){.grid{grid-template-columns:1fr}}
+
+/* Cartes */
 .card{background:linear-gradient(180deg,#141a3a,#111633);border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.28)}
 .card h2{margin:0 0 10px;font-size:20px}
 .tag{display:inline-flex;gap:6px;align-items:center;padding:4px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);color:var(--muted);font-size:12px}
 .note{color:#cdd6ff;font-size:13px}
 .section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+
+/* Exos */
 .exo{display:grid;grid-template-columns:1fr auto;gap:8px;padding:12px 0;border-top:1px dashed rgba(255,255,255,.08)}
 .exo:first-child{border-top:none}
 .exo h3{margin:0;font-size:16px}
@@ -53,6 +71,8 @@ body{ padding-top: var(--appbar-h); }
 .chk{display:flex;align-items:center;gap:6px;background:#0e1430;border:1px solid var(--border);border-radius:999px;padding:4px 8px}
 .chk input{accent-color:var(--ok);transform:scale(1.1)}
 .exo details{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:8px;border-radius:10px;margin-top:8px;line-height:1.4}
+
+/* Recettes */
 .rec{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:12px 0;border-top:1px dashed rgba(255,255,255,.08)}
 .rec:first-child{border-top:none}
 .tile{width:110px;height:110px;border-radius:14px;border:1px solid var(--border);background:radial-gradient(95px 75px at 60% 20%,rgba(125,211,252,.25),transparent 60%),linear-gradient(180deg,#151b3f,#0f1533)}
@@ -63,16 +83,16 @@ body{ padding-top: var(--appbar-h); }
 .small{font-size:12px;color:#b5c0ff}
 hr.sep{border:none;border-top:1px dashed rgba(255,255,255,.1);margin:12px 0}
 footer{font-size:12px;color:#9fb0ff;opacity:.9;margin:18px 0}
-svg{display:block}
 
-/* Donut macros */
+/* Donuts macros */
 .donut{position:relative;width:110px;height:110px}
+svg{display:block}
 .donut .mid{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#dfe6ff}
 .swatch{display:flex;gap:6px;align-items:center}
 .swatch::before{content:"";width:10px;height:10px;border-radius:2px;display:inline-block}
 .swatch.p::before{background:#60a5fa}.swatch.l::before{background:#f472b6}.swatch.g::before{background:#fbbf24}
 
-/* Modales > header + fond bloqué */
+/* Modales au-dessus du header + blocage fond */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:18px;z-index:9999;will-change:transform}
 .modal.open{display:flex}
 .modal .box{max-width:900px;background:linear-gradient(180deg,#141a3a,#111633);border:1px solid var(--border);border-radius:16px;padding:16px;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.45);position:relative;z-index:10000}
@@ -116,7 +136,7 @@ svg{display:block}
 .fNav{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:10px}
 .progress{font-size:13px;color:#cdd6ff}
 .focusTimer{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-.focusTimer button{background:#0e1430;border:1px solid var(--border);color:var(--ink);padding:8px 10px;border-radius:10px;cursor:pointer}
+.focusTimer button{background:#0e1430;border:1px solid var(--border);color:#fff;padding:8px 10px;border-radius:10px;cursor:pointer}
 
 /* Courses */
 .gbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
@@ -130,7 +150,7 @@ svg{display:block}
 .item input{transform:scale(1.1);accent-color:var(--ok)}
 .item .qty{font-size:12px;color:#b9c1ff}
 
-/* Mobile friendly (iPhone) */
+/* iPhone friendly */
 @supports(padding: env(safe-area-inset-top)) {
   header.sticky { padding-top: env(safe-area-inset-top); }
   footer       { padding-bottom: env(safe-area-inset-bottom); }
@@ -152,26 +172,10 @@ svg{display:block}
   .tile{width:96px;height:96px}
   .donut{transform:scale(.9);transform-origin:top left}
 }
-@media (max-width: 480px){
-  .modal .box{max-width:95vw;padding:12px}
-  .mod-grid{grid-template-columns:1fr}
-  .timer .display{font-size:24px}
-}
 
-/* État global quand une modale est ouverte */
+/* Quand une modale est ouverte, pas de scroll ni clics de fond */
 body[data-modal-open="1"]{overflow:hidden;touch-action:none}
 body[data-modal-open="1"] header.sticky{pointer-events:none}
-/* Solidifier l'app-bar fixe sur iOS */
-header.sticky{
-  position: fixed; top: 0; left: 0; right: 0; width: 100%;
-  transform: translateZ(0); /* force un contexte GPU, évite le "décrochage" iOS */
-}
-
-/* Quand une modale est ouverte, on bloque bien le fond */
-body[data-modal-open="1"]{ overflow:hidden; touch-action:none; }
-
-/* Sécurité : les modales restent au-dessus du header coûte que coûte */
-.modal{ z-index: 9999; }
 </style>
 </head>
 <body>
@@ -354,7 +358,7 @@ body[data-modal-open="1"]{ overflow:hidden; touch-action:none; }
       </article>
       <article class="card">
         <h2>Rappel simple</h2>
-        <ul class="note"><li>Progression : haut de la fourchette à RPE ≤8 → +1–2 reps ou +2 kg séance suivante.</li><li>Sommeil 7–8 h. Lever plus simple : lumière, eau, 5’ de marche.</li><li>Tabac : −5 cigarettes/sem. (bénéfices cardio rapides).</li></ul>
+        <ul class="note"><li>Progression : haut de la fourchette à RPE ≤8 → +1–2 reps ou +2 kg séance suivante.</li><li>Sommeil 7–8 h. Lever simple : lumière, eau, 5’ de marche.</li><li>Tabac : −5 cigarettes/sem.</li></ul>
       </article>
     </div>
   </section>
@@ -405,10 +409,10 @@ body[data-modal-open="1"]{ overflow:hidden; touch-action:none; }
 </main>
 
 <footer class="wrap">
-  <p>App-bar fixe, Focus & Courses prêts. Check-in (20–22 h) intégré. PWA active.</p>
+  <p>Desktop : en-tête visible. Mobile : auto-hide intelligent. PWA active. Let’s go.</p>
 </footer>
 
-<!-- Modales : Compléments, Minuteur, Badges, Focus, Courses -->
+<!-- MODALES -->
 <div class="modal" id="modalSupp" aria-hidden="true">
   <div class="box">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px">
@@ -422,7 +426,7 @@ body[data-modal-open="1"]{ overflow:hidden; touch-action:none; }
       <div class="card"><h3>Oméga-3 (EPA+DHA)</h3><ul class="note"><li><b>Dose :</b> 1–2 g d’EPA+DHA/j (tu manges peu de poisson).</li><li><b>Timing :</b> au repas.</li><li><b>Bénéfices :</b> cœur, inflammation, récup.</li></ul></div>
       <div class="card"><h3>Vitamine D3</h3><ul class="note"><li><b>Dose :</b> 1000–2000 UI/j (idéal après dosage sanguin).</li><li><b>Timing :</b> avec un peu de lipides.</li></ul></div>
       <div class="card"><h3>Magnésium (glycinate)</h3><ul class="note"><li><b>Dose :</b> 200–400 mg le soir.</li><li><b>Bénéfices :</b> sommeil, stress, crampes.</li></ul></div>
-      <div class="card"><h3>Collagène (type I/III)</h3><ul class="note"><li><b>Dose :</b> 10 g/j (jusqu’à 15 g si tendons/articulations sollicités).</li><li><b>Timing :</b> petit-déj. ou 30–60 min pré-séance + <b>vitamine C</b> (fruit ou 200–500 mg).</li><li><b>Bénéfices :</b> tendons/ligaments, peau, ongles.</li></ul></div>
+      <div class="card"><h3>Collagène (type I/III)</h3><ul class="note"><li><b>Dose :</b> 10 g/j (jusqu’à 15 g si tendons/articulations sollicités).</li><li><b>Timing :</b> petit-déj. ou 30–60 min pré-séance + <b>vitamine C</b>.</li><li><b>Bénéfices :</b> tendons/ligaments, peau, ongles.</li></ul></div>
     </div>
   </div>
 </div>
@@ -494,7 +498,7 @@ nav.addEventListener('click',e=>{
   const d=e.target.getAttribute('data-day');
   btns.forEach(b=>b.classList.toggle('active',b===e.target));
   days.forEach(sec=>sec.hidden = sec.getAttribute('data-day')!==d);
-  // recentre l'onglet cliqué et remonte sous le header fixe
+  // recentre l'onglet cliqué et remonte sous le header (utile sur iOS)
   try{ e.target.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'}); }catch{}
   window.scrollTo({ top: 0 });
 });
@@ -573,10 +577,12 @@ function createDonut(el){
 }
 document.querySelectorAll('.donut').forEach(createDonut);
 
-/* ===== HELPERS MODALES (avec blocage du fond) ===== */
+/* ===== MODALES (fond bloqué) ===== */
 function openModal(m){
   m.classList.add('open'); m.setAttribute('aria-hidden','false');
   document.body.dataset.modalOpen = "1";
+  // Affiche l'app-bar pendant les modales
+  document.body.classList.remove('appbar-hidden');
 }
 function closeModal(m){
   m.classList.remove('open'); m.setAttribute('aria-hidden','true');
@@ -712,7 +718,7 @@ function focusRender(){
     <div class="fNav">
       <button class="btn" id="fPrev">← Précédent</button>
       <button class="btn" id="fResetExo">Réinitialiser l’exercice</button>
-      <button class="btn" id="fNext">${doneCount===ex.sets?'Suivant →':'Suivant (après séries)'} </button>
+      <button class="btn" id="fNext">${doneCount===ex.sets?'Suivant →':'Suivant (après séries)'}</button>
     </div>
   `;
   const holder=d.getElementById('fSet');
@@ -842,17 +848,62 @@ document.getElementById('gNone').addEventListener('click',()=>{ const boxes=[...
 document.getElementById('gCopy').addEventListener('click',()=>{ const lines=[]; gListEl.querySelectorAll('.gcat').forEach(cat=>{ const title=cat.querySelector('h3').textContent; const items=[...cat.querySelectorAll('.item')].filter(i=>i.querySelector('input').checked).map(i=>'- '+i.querySelector('label').textContent.trim()); if(items.length){ lines.push(title); lines.push(...items,''); } }); const txt=lines.join('\n'); navigator.clipboard.writeText(txt).then(()=>alert('Liste copiée.')); });
 document.getElementById('gExport').addEventListener('click',()=>{ const lines=[]; gListEl.querySelectorAll('.gcat').forEach(cat=>{ const title=cat.querySelector('h3').textContent; const items=[...cat.querySelectorAll('.item')].filter(i=>i.querySelector('input').checked).map(i=>'- '+i.querySelector('label').textContent.trim()); if(items.length){ lines.push(title); lines.push(...items,''); } }); const txt=lines.join('\n'); const blob=new Blob([txt],{type:'text/plain;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=d.createElement('a'); a.href=url; a.download='courses.txt'; a.click(); URL.revokeObjectURL(url); });
 
-/* ===== App-bar : offset dynamique ===== */
+/* ===== Offset dynamique de l’app-bar ===== */
 (function appbarOffset(){
   const header = document.querySelector('header.sticky');
   if(!header) return;
   function setOffset(){
-    const h = header.getBoundingClientRect().height;
+    const h = Math.round(header.getBoundingClientRect().height);
     document.documentElement.style.setProperty('--appbar-h', h + 'px');
   }
-  window.addEventListener('load', setOffset, {once:true});
-  window.addEventListener('resize', setOffset);
+  const setSoon=()=>setTimeout(setOffset,0);
+  window.addEventListener('load', setSoon, {once:true});
+  window.addEventListener('resize', setSoon);
+  window.addEventListener('orientationchange', setSoon);
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) setSoon(); });
   try{ new ResizeObserver(setOffset).observe(header); }catch{}
+})();
+
+/* ===== Auto-hide mobile (≤ 900px) ===== */
+(function appbarAutoHide(){
+  const header = document.querySelector('header.sticky');
+  if(!header) return;
+
+  let lastY = window.scrollY;
+  let enabled = window.matchMedia('(max-width: 900px)').matches;
+
+  function showBar(){ document.body.classList.remove('appbar-hidden'); }
+  function hideBar(){ document.body.classList.add('appbar-hidden'); }
+
+  function onScroll(){
+    if (!enabled) return;
+    if (document.body.dataset.modalOpen === "1") { showBar(); return; }
+    const y = window.scrollY;
+    const goingDown = y > lastY && y > 80;
+    const goingUp   = y < lastY;
+    if (goingDown) hideBar();
+    else if (goingUp || y < 40) showBar();
+    lastY = y;
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', ()=>{
+    enabled = window.matchMedia('(max-width: 900px)').matches;
+    if(!enabled) showBar();
+    const evt=new Event('orientationchange'); window.dispatchEvent(evt);
+  });
+  window.addEventListener('orientationchange', ()=>{ setTimeout(()=>{ showBar(); }, 0); });
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden){ setTimeout(()=>{ showBar(); }, 0); }});
+
+  // Interactions qui doivent toujours révéler la barre
+  ['click','pointerdown','touchstart'].forEach(evt=>{
+    document.getElementById('nav')?.addEventListener(evt, showBar, {passive:true});
+  });
+  document.querySelectorAll('header .actions .btn').forEach(b=>{
+    ['click','pointerdown','touchstart'].forEach(evt=> b.addEventListener(evt, showBar, {passive:true}));
+  });
+
+  // Init
+  setTimeout(()=>{ showBar(); }, 0);
 })();
 
 /* ===== PWA: enregistrement SW ===== */
@@ -861,23 +912,6 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./service-worker.js').catch(console.error);
   });
 }
-(function solidHeader(){
-  const header = document.querySelector('header.sticky');
-  if(!header) return;
-  function setOffset(){
-    const h = Math.round(header.getBoundingClientRect().height);
-    document.documentElement.style.setProperty('--appbar-h', h + 'px');
-  }
-  const setOffsetSoon = ()=> setTimeout(setOffset, 0);
-
-  window.addEventListener('load', setOffsetSoon, {once:true});
-  window.addEventListener('resize', setOffsetSoon);
-  window.addEventListener('orientationchange', setOffsetSoon);
-  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) setOffsetSoon(); });
-
-  try{ new ResizeObserver(setOffset).observe(header); }catch{}
-})();
 </script>
 </body>
 </html>
-
