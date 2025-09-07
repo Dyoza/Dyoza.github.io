@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Programme Hebdo v1.6.1 — Focus + Courses + PWA</title>
 
 <link rel="manifest" href="manifest.webmanifest">
@@ -161,6 +161,17 @@ svg{display:block}
 /* État global quand une modale est ouverte */
 body[data-modal-open="1"]{overflow:hidden;touch-action:none}
 body[data-modal-open="1"] header.sticky{pointer-events:none}
+/* Solidifier l'app-bar fixe sur iOS */
+header.sticky{
+  position: fixed; top: 0; left: 0; right: 0; width: 100%;
+  transform: translateZ(0); /* force un contexte GPU, évite le "décrochage" iOS */
+}
+
+/* Quand une modale est ouverte, on bloque bien le fond */
+body[data-modal-open="1"]{ overflow:hidden; touch-action:none; }
+
+/* Sécurité : les modales restent au-dessus du header coûte que coûte */
+.modal{ z-index: 9999; }
 </style>
 </head>
 <body>
@@ -850,6 +861,23 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./service-worker.js').catch(console.error);
   });
 }
+(function solidHeader(){
+  const header = document.querySelector('header.sticky');
+  if(!header) return;
+  function setOffset(){
+    const h = Math.round(header.getBoundingClientRect().height);
+    document.documentElement.style.setProperty('--appbar-h', h + 'px');
+  }
+  const setOffsetSoon = ()=> setTimeout(setOffset, 0);
+
+  window.addEventListener('load', setOffsetSoon, {once:true});
+  window.addEventListener('resize', setOffsetSoon);
+  window.addEventListener('orientationchange', setOffsetSoon);
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) setOffsetSoon(); });
+
+  try{ new ResizeObserver(setOffset).observe(header); }catch{}
+})();
 </script>
 </body>
 </html>
+
