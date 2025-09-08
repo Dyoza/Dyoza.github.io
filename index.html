@@ -22,9 +22,13 @@ a{color:inherit}
 
 /* ===== Header sticky (design d’origine) ===== */
 header.sticky{
-  position:sticky; top:0; z-index:5;
-  background:rgba(14,18,36,.85); backdrop-filter:saturate(1.1) blur(8px);
-  border-bottom:1px solid rgba(255,255,255,.07); padding-top:env(safe-area-inset-top)
+  position: fixed;      /* <- fixe */
+  top: 0; left: 0; right: 0;
+  z-index: 40;          /* au-dessus du contenu, sous les modales */
+  background: rgba(14,18,36,.85);
+  backdrop-filter: saturate(1.1) blur(8px);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  padding-top: env(safe-area-inset-top); /* notch iPhone */
 }
 .wrap{max-width:1100px;margin:0 auto;padding:20px}
 .headbar{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 20px}
@@ -816,6 +820,20 @@ if ('serviceWorker' in navigator) {
   // check-in window label
   const ciw=document.getElementById('ci_window'); if(ciw){ const upd=()=>{ ciw.textContent=(new Date().getHours()>=20 && new Date().getHours()<22)?'Fenêtre OUVERTE (20–22 h)':'Fenêtre fermée (remplis si besoin)'; }; upd(); setInterval(upd,60*1000); }
 })();
+// Calage body sous l’en-tête (responsive, iPhone inclus)
+(function fixHeaderHeight(){
+  const hdr = document.querySelector('header.sticky');
+  function setH(){ 
+    if (!hdr) return;
+    // offsetHeight inclut le padding top (safe-area)
+    document.documentElement.style.setProperty('--header-h', hdr.offsetHeight + 'px');
+  }
+  window.addEventListener('load', setH);
+  window.addEventListener('resize', setH);
+  // recalcul après ouverture/fermeture d’éléments qui peuvent changer la hauteur
+  new MutationObserver(setH).observe(hdr, {childList:true, subtree:true, attributes:true});
+})();
 </script>
 </body>
 </html>
+
