@@ -3,30 +3,28 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>Programme Hebdo — v1.6.7 (fix recettes + focus/minuteur)</title>
+<title>Transformation — Semaine type (v1.7)</title>
 
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0e1224">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <style>
-/* ====== Thème & base (identique) ====== */
 :root{
   --bg:#0e1224; --ink:#eef2ff; --muted:#a5b4fc; --card:#121735; --panel:#161d44; --border:#26306b;
-  --accent:#7dd3fc; --ok:#22c55e; --warn:#f59e0b; --danger:#ef4444;
+  --accent:#7dd3fc; --ok:#22c55e; --warn:#f59e0b; --danger:#ef4444; --pink:#f472b6; --gold:#fbbf24;
   --ring:0 0 0 2px rgba(125,211,252,.45);
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:linear-gradient(180deg,#0e1224,#0a0f21 70%);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
 a{color:inherit}
 
-/* ====== En-tête statique (comme avant) ====== */
+/* ===== Header sticky (design d’origine) ===== */
 header.sticky{
-  position: static;
-  z-index: 10;
-  background:rgba(14,18,36,.85);
-  backdrop-filter:saturate(1.1) blur(8px);
-  border-bottom:1px solid rgba(255,255,255,.07);
-  padding-top: env(safe-area-inset-top);
+  position:sticky; top:0; z-index:5;
+  background:rgba(14,18,36,.85); backdrop-filter:saturate(1.1) blur(8px);
+  border-bottom:1px solid rgba(255,255,255,.07); padding-top:env(safe-area-inset-top)
 }
 .wrap{max-width:1100px;margin:0 auto;padding:20px}
 .headbar{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 20px}
@@ -36,19 +34,28 @@ header.sticky{
 .btn{background:var(--panel);border:1px solid var(--border);color:var(--ink);padding:8px 10px;border-radius:10px;cursor:pointer}
 .btn:hover{outline:var(--ring)}
 
+/* Onglets jours */
 .days{display:grid;grid-template-columns:repeat(9,1fr);gap:8px;padding:8px 20px 14px}
 .days button{border:1px solid var(--border);background:var(--card);color:var(--ink);padding:8px;border-radius:10px;cursor:pointer;font-weight:700}
 .days button.active{background:linear-gradient(180deg,#1a2146,#121838);outline:var(--ring)}
+@media (max-width:900px){
+  .days{display:flex;gap:8px;overflow-x:auto;padding:8px 12px 14px}
+  .days::-webkit-scrollbar{display:none}
+  .days button{flex:0 0 auto;min-width:68px}
+}
 
+/* Colonnes */
 .grid{display:grid;grid-template-columns:1.1fr 1fr;gap:16px}
 @media(max-width:950px){.grid{grid-template-columns:1fr}}
 
+/* Cartes */
 .card{background:linear-gradient(180deg,#141a3a,#111633);border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.28)}
 .card h2{margin:0 0 10px;font-size:20px}
 .tag{display:inline-flex;gap:6px;align-items:center;padding:4px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);color:var(--muted);font-size:12px}
+.note{color:#cdd6ff;font-size:13px}
 .section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 
-/* ====== EXERCICES ====== */
+/* Exos */
 .exo{display:grid;grid-template-columns:1fr auto;gap:8px;padding:12px 0;border-top:1px dashed rgba(255,255,255,.08)}
 .exo:first-child{border-top:none}
 .exo h3{margin:0;font-size:16px;display:flex;align-items:center;gap:8px}
@@ -59,22 +66,19 @@ header.sticky{
 .sets{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-self:end}
 .chk{display:flex;align-items:center;gap:6px;background:#0e1430;border:1px solid var(--border);border-radius:999px;padding:4px 8px}
 .chk input{accent-color:var(--ok);transform:scale(1.1)}
+.exo details{grid-column:1/-1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:8px;border-radius:10px;margin-top:6px;line-height:1.4}
 
-/* ====== RECETTES (fix “en long”) ====== */
+/* Recettes — “en long” */
 .rec{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:12px 0;border-top:1px dashed rgba(255,255,255,.08)}
 .rec:first-child{border-top:none}
 .tile{width:110px;height:110px;border-radius:14px;border:1px solid var(--border);background:radial-gradient(95px 75px at 60% 20%,rgba(125,211,252,.25),transparent 60%),linear-gradient(180deg,#151b3f,#0f1533)}
 .kpi{display:flex;gap:8px;flex-wrap:wrap}
 .pill{background:rgba(125,211,252,.12);border:1px solid rgba(125,211,252,.25);color:#c0ecff;padding:6px 10px;border-radius:999px;font-size:12px}
+.line{margin-top:6px;color:#dbe6ff;font-size:14px}
+.ingsline{margin-top:6px;color:#bcd1ff;font-size:13px}
+.ingsline .sep{opacity:.5;margin:0 .5ch}
 
-/* >>> Ces 3 règles empêchent les coupures moches et forcent un paragraphe “en long” */
-.rec h3, .line{white-space:normal; word-break:normal; overflow-wrap:anywhere}
-.line{margin-top:6px;color:#dbe6ff;font-size:14px;line-height:1.55;letter-spacing:.2px}
-
-.ings{margin-top:6px;color:#bcd1ff;font-size:12px}
-.ings .t{display:inline-block;margin:3px 6px 0 0;padding:4px 8px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:#0f1434}
-
-/* ====== Donuts macros (identique) ====== */
+/* Donuts macros */
 .donut{position:relative;width:110px;height:110px}
 svg{display:block}
 .donut .mid{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#dfe6ff}
@@ -82,52 +86,45 @@ svg{display:block}
 .swatch::before{content:"";width:10px;height:10px;border-radius:2px;display:inline-block}
 .swatch.p::before{background:#60a5fa}.swatch.l::before{background:#f472b6}.swatch.g::before{background:#fbbf24}
 
-/* ====== MODALES (Focus / Minuteur…) ====== */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:18px;z-index:9999}
+/* Modales (Focus / Minuteur / Badges / Supps / Courses) */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
 .modal.open{display:flex}
-.modal .box{max-width:900px;background:linear-gradient(180deg,#141a3a,#111633);border:1px solid var(--border);border-radius:16px;padding:16px;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.45);position:relative}
+.modal .box{max-width:920px;background:linear-gradient(180deg,#141a3a,#111633);border:1px solid var(--border);border-radius:16px;padding:16px;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.45);position:relative}
 .mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:880px){.mod-grid{grid-template-columns:1fr}}
+.modal h2{margin:0 0 6px}
 
-/* ====== STYLE “FOCUS SÉANCE” (nouveau) ====== */
-.focusTitle{margin:4px 0 6px;font-size:18px}
+/* Focus — style */
+.focusTitle{font-size:18px;margin:0 0 6px}
 .focusMeta{color:#b9c1ff;font-size:13px;margin-bottom:8px}
-#fBody .bubble{
-  width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
-  background:#0e1430;border:1px solid var(--border);color:#8fb7ff;font-weight:800;margin:6px;cursor:pointer;
-  box-shadow:inset 0 -1px 0 rgba(255,255,255,.06)
-}
-#fBody .bubble.done{
-  background:linear-gradient(180deg,#203468,#1a2a52);border-color:#3e63f3;color:#fff;
-  box-shadow:inset 0 0 0 2px rgba(100,149,237,.25)
-}
-#fBody .focusTimer{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
-#fBody .focusTimer .small{color:#a8b3ff;font-size:12px}
-#fBody .focusTimer button,
-#fPrev,#fNext,#fResetExo{
-  background:var(--panel);border:1px solid var(--border);color:var(--ink);
-  padding:8px 10px;border-radius:10px;cursor:pointer
-}
-#fBody .progress{margin-top:8px;color:#cfe3ff}
+.fSet{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.fSet .bubble{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#0e1430;border:1px solid var(--border);font-weight:800}
+.fSet .bubble.done{background:linear-gradient(180deg,#1d2a58,#152044);border-color:#4068ff}
+.focusTimer button,.fNav .btn,.tbtn{background:var(--panel);border:1px solid var(--border);color:var(--ink);padding:8px 10px;border-radius:10px;cursor:pointer;margin-right:6px}
+.progress{font-size:13px;color:#cfe3ff;margin-top:6px}
 
-/* ====== MINUTEUR (nouveau style) ====== */
-.timer{display:grid;gap:10px;justify-items:center}
-.display{
-  font-variant-numeric:tabular-nums;
-  font-size:38px;font-weight:800;letter-spacing:.5px;
-  padding:8px 14px;border-radius:12px;background:#0e1430;border:1px solid var(--border)
-}
-.preset{display:flex;gap:8px;flex-wrap:wrap}
-.tbtn{
-  background:var(--panel);border:1px solid var(--border);color:var(--ink);
-  padding:8px 10px;border-radius:10px;cursor:pointer
-}
-.tbtn:hover,.btn:hover{outline:var(--ring)}
+/* Minuteur */
+.timer .display{font-variant-numeric:tabular-nums;font-size:40px;letter-spacing:1px;background:#0e1430;border:1px solid var(--border);border-radius:12px;padding:8px 12px;display:inline-block;margin:6px 0}
+.preset{display:flex;gap:8px;margin:6px 0}
 
-/* ====== Tableaux / formulaires (idem) ====== */
-.note{color:#cdd6ff;font-size:13px}
+/* Courses + prix */
+.gbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.switch{display:flex;align-items:center;gap:6px}
+.glist{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:880px){.glist{grid-template-columns:1fr}}
+.gcat{border:1px solid var(--border);border-radius:12px;padding:12px;background:rgba(255,255,255,.03)}
+.gcat h3{margin:0 0 8px}
+.item{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:6px 0;border-top:1px dashed rgba(255,255,255,.1)}
+.item:first-child{border-top:none}
+.item input{transform:scale(1.1);accent-color:var(--ok)}
+.item .qty{font-size:12px;color:#b9c1ff}
+.price{font-size:12px;color:#d7e7ff}
+.price .edit{width:80px;background:#0e1430;border:1px solid var(--border);border-radius:8px;color:#fff;padding:4px 6px}
+
+/* Check-in */
 .form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:900px){.form{grid-template-columns:1fr}}
+.form label{display:block;font-weight:600;margin-bottom:4px}
 .form input[type=number], .form input[type=date], .form textarea{
   width:100%;background:#0e1430;border:1px solid var(--border);border-radius:10px;color:var(--ink);padding:8px 10px
 }
@@ -136,28 +133,29 @@ svg{display:block}
 .table th,.table td{border:1px solid rgba(255,255,255,.08);padding:6px 8px;white-space:nowrap}
 .table th{background:rgba(255,255,255,.06);text-align:left}
 
-/* iPhone */
+/* HUD / XP / Streak */
+.hud{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.level{font-weight:700}
+.xpbar{position:relative;width:220px;height:10px;border-radius:999px;background:#0e1430;border:1px solid var(--border);overflow:hidden}
+.xpbar>span{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#60a5fa,#22c55e);width:0%}
+.streak{display:inline-flex;gap:6px;align-items:center;padding:4px 10px;border:1px solid rgba(255,255,255,.12);border-radius:999px;color:#ffd29a}
+
+/* safe-area iPhone */
 @supports(padding: env(safe-area-inset-top)) {
   header.sticky { padding-top: env(safe-area-inset-top); }
   footer       { padding-bottom: env(safe-area-inset-bottom); }
 }
-@media (max-width: 900px){
-  .days{display:flex !important;gap:8px;overflow-x:auto;padding:8px 12px 14px}
-  .days::-webkit-scrollbar{display:none}
-  .days button{flex:0 0 auto;min-width:68px;padding:10px 12px}
-}
 </style>
 </head>
 <body>
-<!-- ====== ENTÊTE ====== -->
 <header class="sticky">
   <div class="headbar">
     <div class="brand"><span class="dot"></span><strong>Transformation — Semaine type (utilisable)</strong></div>
     <div class="actions">
       <div class="hud">
         <span class="level">Niv. <span id="level">1</span></span>
-        <div class="xpbar" style="position:relative;width:220px;height:10px;border-radius:999px;background:#0e1430;border:1px solid var(--border);overflow:hidden"><span id="xpfill" style="position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#60a5fa,#22c55e);width:0%"></span></div>
-        <span class="streak" style="display:inline-flex;gap:6px;align-items:center;padding:4px 10px;border:1px solid rgba(255,255,255,.12);border-radius:999px;color:#ffd29a">🔥 Streak : <span id="streak">0</span> j</span>
+        <div class="xpbar" aria-label="XP vers niveau suivant"><span id="xpfill"></span></div>
+        <span class="streak">🔥 Streak : <span id="streak">0</span> j</span>
       </div>
       <button class="btn" id="btnFocus">Focus séance</button>
       <button class="btn" id="btnGroceries">Courses</button>
@@ -181,7 +179,9 @@ svg{display:block}
 </header>
 
 <main class="wrap">
-  <!-- ====== J1 (exemple — les autres jours identiques à ta version) ====== -->
+
+  <!-- ===== JOURS (1 à 7) ===== -->
+  <!-- J1 -->
   <section class="day" data-day="1">
     <div class="grid">
       <article class="card">
@@ -192,17 +192,17 @@ svg{display:block}
             <h3>Goblet Squat <a class="info-badge" href="https://www.youtube.com/results?search_query=goblet+squat" target="_blank" rel="noopener">ⓘ</a></h3>
             <p class="meta"><span class="chip">4×8–12</span><span class="chip">RPE 7–8</span><span class="chip">Tempo 3–1–2</span><span class="chip">Repos 90s</span></p>
             <details><summary>Comment faire</summary>
-              <ul class="note"><li>Pieds largeur épaules, haltère au torse.</li><li>Descends 3s (cuisses //), stop 1s, remonte 2s.</li><li>Genoux dans l’axe, talons au sol, abdos gainés.</li></ul>
+              <ul class="note"><li>Pieds largeur épaules, haltère collé au torse.</li><li>Descends 3s (cuisses //), stop 1s, remonte 2s.</li><li>Genoux dans l’axe, talons au sol, abdos gainés.</li></ul>
             </details>
           </div>
-          <div class="sets" data-sets="4" data-key="d1-goblet"></div>
+          <div class="sets" data-sets="4" data-key="d1-goblet" data-rest="90"></div>
         </div>
 
-        <div class="exo"><div><h3>Développé couché haltères <a class="info-badge" href="https://www.youtube.com/results?search_query=dumbbell+bench+press" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">4×8–12</span><span class="chip">Tempo 2–1–2</span><span class="chip">Repos 90s</span></p></div><div class="sets" data-sets="4" data-key="d1-bench"></div></div>
-        <div class="exo"><div><h3>Tractions assistées / négatives <a class="info-badge" href="https://www.youtube.com/results?search_query=negative+pull+ups" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">5×3–5</span><span class="chip">Tempo 0–1–5</span><span class="chip">Repos 90s</span></p></div><div class="sets" data-sets="5" data-key="d1-pullups"></div></div>
-        <div class="exo"><div><h3>RDL — haltères <a class="info-badge" href="https://www.youtube.com/results?search_query=dumbbell+romanian+deadlift" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">3×10–12</span><span class="chip">Tempo 3–1–2</span><span class="chip">Repos 90s</span></p></div><div class="sets" data-sets="3" data-key="d1-rdl"></div></div>
-        <div class="exo"><div><h3>Row unilatéral banc <a class="info-badge" href="https://www.youtube.com/results?search_query=one+arm+dumbbell+row" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">3×12/bras</span><span class="chip">Tempo 2–1–2</span><span class="chip">Repos 75s</span></p></div><div class="sets" data-sets="3" data-key="d1-row"></div></div>
-        <div class="exo"><div><h3>Dead Bug <a class="info-badge" href="https://www.youtube.com/results?search_query=dead+bug+exercise" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">3×8/côté</span><span class="chip">Contrôle</span><span class="chip">Repos 45s</span></p></div><div class="sets" data-sets="3" data-key="d1-deadbug"></div></div>
+        <div class="exo"><div><h3>Développé couché haltères <a class="info-badge" href="https://www.youtube.com/results?search_query=dumbbell+bench+press" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">4×8–12</span><span class="chip">Tempo 2–1–2</span><span class="chip">Repos 90s</span></p></div><div class="sets" data-sets="4" data-key="d1-bench" data-rest="90"></div></div>
+        <div class="exo"><div><h3>Tractions assistées / négatives <a class="info-badge" href="https://www.youtube.com/results?search_query=negative+pull+ups" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">5×3–5</span><span class="chip">Tempo 0–1–5</span><span class="chip">Repos 90s</span></p></div><div class="sets" data-sets="5" data-key="d1-pullups" data-rest="90"></div></div>
+        <div class="exo"><div><h3>RDL — haltères <a class="info-badge" href="https://www.youtube.com/results?search_query=dumbbell+romanian+deadlift" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">3×10–12</span><span class="chip">Tempo 3–1–2</span><span class="chip">Repos 90s</span></p></div><div class="sets" data-sets="3" data-key="d1-rdl" data-rest="90"></div></div>
+        <div class="exo"><div><h3>Row unilatéral banc <a class="info-badge" href="https://www.youtube.com/results?search_query=one+arm+dumbbell+row" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">3×12/bras</span><span class="chip">Tempo 2–1–2</span><span class="chip">Repos 75s</span></p></div><div class="sets" data-sets="3" data-key="d1-row" data-rest="75"></div></div>
+        <div class="exo"><div><h3>Dead Bug <a class="info-badge" href="https://www.youtube.com/results?search_query=dead+bug+exercise" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">3×8/côté</span><span class="chip">Contrôle</span><span class="chip">Repos 45s</span></p></div><div class="sets" data-sets="3" data-key="d1-deadbug" data-rest="45"></div></div>
       </article>
 
       <article class="card">
@@ -213,8 +213,8 @@ svg{display:block}
           <div>
             <h3>Salade poulet croquante (≈15’)</h3>
             <div class="kpi"><span class="pill">~510 kcal</span><span class="pill">P 55 g</span><span class="pill">L 12 g</span><span class="pill">G 35 g</span></div>
-            <div class="ings"><span class="t">Poulet 180 g</span><span class="t">salade</span><span class="t">tomate</span><span class="t">concombre</span><span class="t">maïs 60 g</span><span class="t">yaourt 0% 150 g</span><span class="t">citron</span><span class="t">herbes</span></div>
-            <p class="line">Saisir le poulet 6–8 min; mélanger légumes + yaourt + citron + herbes; ajouter le poulet, mélanger, servir frais.</p>
+            <p class="ingsline">Ingrédients : Poulet 180 g <span class="sep">•</span> salade <span class="sep">•</span> tomate <span class="sep">•</span> concombre <span class="sep">•</span> maïs 60 g <span class="sep">•</span> yaourt 0% 150 g <span class="sep">•</span> citron <span class="sep">•</span> herbes.</p>
+            <p class="line">Saisir le poulet 6–8 min ; mélanger légumes + yaourt + citron + herbes ; ajouter le poulet, mélanger et servir.</p>
           </div>
         </div>
 
@@ -223,35 +223,179 @@ svg{display:block}
           <div>
             <h3>Chili express (batch 2 portions)</h3>
             <div class="kpi"><span class="pill">~600 kcal/portion</span><span class="pill">P 45 g</span><span class="pill">L 16 g</span><span class="pill">G 60 g</span></div>
-            <div class="ings"><span class="t">Bœuf 5% 300 g</span><span class="t">haricots rouges 240 g</span><span class="t">tomate 400 g</span><span class="t">oignon</span><span class="t">épices</span></div>
-            <p class="line">Suer oignon et épices 2–3 min; saisir le bœuf 4–5 min; ajouter tomate et haricots; mijoter 15–20 min jusqu’à épaississement.</p>
+            <p class="ingsline">Bœuf 5% 300 g <span class="sep">•</span> haricots rouges 240 g <span class="sep">•</span> tomate 400 g <span class="sep">•</span> oignon <span class="sep">•</span> épices.</p>
+            <p class="line">Suer oignon + épices 2–3 min ; saisir le bœuf 4–5 min ; ajouter tomate + haricots ; mijoter 15–20 min jusqu’à épaississement.</p>
           </div>
         </div>
-
-        <p class="note">Règle : 30–45 g de protéines/repas • légumes à volonté • eau 3–4 L.</p>
       </article>
     </div>
   </section>
 
-  <!-- Les autres jours / check-in / infos : garde tes blocs actuels identiques -->
-  <!-- … -->
+  <!-- J2 -->
+  <section class="day" data-day="2" hidden>
+    <div class="grid">
+      <article class="card">
+        <div class="section-title"><h2>Jour 2 — Cardio Z2 + McGill (30–45’)</h2><span class="tag">Endurance + dos friendly</span></div>
+        <div class="exo"><div><h3>Pratique Tractions (bandes) <a class="info-badge" href="https://www.youtube.com/results?search_query=band+assisted+pull+ups" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">EMOM 10’</span><span class="chip">3–5 reps</span></p></div><div class="sets" data-sets="10" data-key="d2-pullupemom" data-rest="60"></div></div>
+        <div class="exo"><div><h3>Footing Z2 <a class="info-badge" href="https://www.youtube.com/results?search_query=zone+2+training" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">25–35’</span><span class="chip">aisance respiratoire</span></p></div><div class="sets" data-sets="1" data-key="d2-z2"></div></div>
+        <div class="exo"><div><h3>McGill Big 3 <a class="info-badge" href="https://www.youtube.com/results?search_query=McGill+Big+3" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">Curl-up 3×10</span><span class="chip">Bird-dog 3×8/côté</span><span class="chip">Gainage lat. 3×30–45’’</span></p></div><div class="sets" data-sets="9" data-key="d2-mcgill" data-rest="30"></div></div>
+      </article>
+      <article class="card">
+        <div class="section-title"><h2>Repas du jour</h2><span class="tag">Satiété & récup</span></div>
+        <div class="rec"><div class="tile"><div class="donut" data-p="45" data-l="12" data-g="45" data-k="480"></div></div><div><h3>Wrap dinde-fromage blanc</h3><div class="kpi"><span class="pill">~480 kcal</span><span class="pill">P 45 g</span><span class="pill">L 12 g</span><span class="pill">G 45 g</span></div><p class="ingsline">Tortilla complète <span class="sep">•</span> dinde 120 g <span class="sep">•</span> fromage blanc 0% 100 g <span class="sep">•</span> salade <span class="sep">•</span> tomate.</p><p class="line">Tartiner, garnir, rouler serré, toaster 1–2 min/face pour souder.</p></div></div>
+        <div class="rec"><div class="tile"><div class="donut" data-p="38" data-l="9" data-g="55" data-k="430"></div></div><div><h3>Overnight Oats protéiné</h3><div class="kpi"><span class="pill">~430 kcal</span><span class="pill">P 38 g</span><span class="pill">L 9 g</span><span class="pill">G 55 g</span></div><p class="ingsline">Lait 200 ml <span class="sep">•</span> yaourt 100 g <span class="sep">•</span> avoine 60 g <span class="sep">•</span> whey 30 g.</p><p class="line">Mélanger dans un bocal ; repos frigo 4 h (ou nuit) ; déguster.</p></div></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- J3 -->
+  <section class="day" data-day="3" hidden>
+    <div class="grid">
+      <article class="card">
+        <div class="section-title"><h2>Jour 3 — Full-Body B (50–60’)</h2><span class="tag">Hanches + dos + épaules</span></div>
+        <div class="exo"><div><h3>Fentes bulgares <a class="info-badge" href="https://www.youtube.com/results?search_query=bulgarian+split+squat" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">3–4×8–10/jambe</span><span class="chip">Tempo 3–1–2</span></p></div><div class="sets" data-sets="4" data-key="d3-bulgarian" data-rest="90"></div></div>
+        <div class="exo"><div><h3>Développé épaules assis <a class="info-badge" href="https://www.youtube.com/results?search_query=dumbbell+shoulder+press+seated" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">3–4×8–12</span></p></div><div class="sets" data-sets="4" data-key="d3-shoulderpress" data-rest="90"></div></div>
+        <div class="exo"><div><h3>Hip Thrust <a class="info-badge" href="https://www.youtube.com/results?search_query=dumbbell+hip+thrust" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">4×10–12</span></p></div><div class="sets" data-sets="4" data-key="d3-hipthrust" data-rest="90"></div></div>
+        <div class="exo"><div><h3>Tirage vertical <a class="info-badge" href="https://www.youtube.com/results?search_query=lat+pulldown+form" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">3×10–12</span><span class="chip">pause 1s poitrine</span></p></div><div class="sets" data-sets="3" data-key="d3-latpulldown" data-rest="90"></div></div>
+        <div class="exo"><div><h3>Face Pull (élastique) <a class="info-badge" href="https://www.youtube.com/results?search_query=band+face+pull" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">3×15</span></p></div><div class="sets" data-sets="3" data-key="d3-facepull" data-rest="60"></div></div>
+        <div class="exo"><div><h3>Pallof Press <a class="info-badge" href="https://www.youtube.com/results?search_query=band+pallof+press" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">3×12/côté</span></p></div><div class="sets" data-sets="6" data-key="d3-pallof" data-rest="45"></div></div>
+      </article>
+      <article class="card">
+        <div class="section-title"><h2>Repas du jour</h2><span class="tag">+ fibres & protéines</span></div>
+        <div class="rec"><div class="tile"><div class="donut" data-p="46" data-l="12" data-g="52" data-k="520"></div></div><div><h3>Wrap protéiné 2.0</h3><div class="kpi"><span class="pill">~520 kcal</span><span class="pill">P 46 g</span><span class="pill">L 12 g</span><span class="pill">G 52 g</span></div><p class="ingsline">Tortilla complète <span class="sep">•</span> poulet 140 g <span class="sep">•</span> yaourt 0% 80 g <span class="sep">•</span> crudités <span class="sep">•</span> avocat 50 g.</p><p class="line">Griller le poulet ; garnir tortilla ; toaster 1–2 min/face.</p></div></div>
+        <div class="rec"><div class="tile"><div class="donut" data-p="40" data-l="10" data-g="75" data-k="600"></div></div><div><h3>Riz + Chili</h3><div class="kpi"><span class="pill">~600 kcal</span><span class="pill">P 40 g</span><span class="pill">L 10 g</span><span class="pill">G 75 g</span></div><p class="ingsline">Chili (veille) <span class="sep">•</span> riz basmati.</p><p class="line">Réchauffer chili ; cuire riz ; mélanger ; ajuster sel/piment.</p></div></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- J4 -->
+  <section class="day" data-day="4" hidden>
+    <div class="grid">
+      <article class="card">
+        <div class="section-title"><h2>Jour 4 — Repos actif (20–30’)</h2><span class="tag">Mobilité & récup</span></div>
+        <ul class="note"><li>Marche 20–30’ + 10’ mobilité (chevilles, hanches, thoracique).</li><li>Respiration 4-7-8 (3–5 cycles) le soir.</li></ul>
+      </article>
+      <article class="card">
+        <h2>Snacks intelligents</h2>
+        <ul class="note"><li>Fromage blanc 0% 200 g + miel (1 c.c.) + cannelle → ~20 g prot.</li><li>Jambon de dinde 100 g + crudités → wrap éclair.</li></ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- J5 -->
+  <section class="day" data-day="5" hidden>
+    <div class="grid">
+      <article class="card">
+        <div class="section-title"><h2>Jour 5 — Haut du corps + Vitesse</h2><span class="tag">Volume haut + vitesse</span></div>
+        <div class="exo"><div><h3>Développé incliné haltères <a class="info-badge" href="https://www.youtube.com/results?search_query=dumbbell+incline+press" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">4×8–12</span></p></div><div class="sets" data-sets="4" data-key="d5-incpress" data-rest="90"></div></div>
+        <div class="exo"><div><h3>Row (prise neutre) <a class="info-badge" href="https://www.youtube.com/results?search_query=seated+row+neutral+grip" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">4×10–12</span></p></div><div class="sets" data-sets="4" data-key="d5-row" data-rest="90"></div></div>
+        <div class="exo"><div><h3>Dips banc / pompes <a class="info-badge" href="https://www.youtube.com/results?search_query=bench+dips" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">3×12–15</span></p></div><div class="sets" data-sets="3" data-key="d5-dips" data-rest="60"></div></div>
+        <div class="exo"><div><h3>Curl haltères <a class="info-badge" href="https://www.youtube.com/results?search_query=dumbbell+biceps+curl" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">3×12–15</span></p></div><div class="sets" data-sets="3" data-key="d5-curl" data-rest="60"></div></div>
+        <div class="exo"><div><h3>Gainage latéral <a class="info-badge" href="https://www.youtube.com/results?search_query=side+plank" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">3×30–45’’/côté</span></p></div><div class="sets" data-sets="6" data-key="d5-sideplank" data-rest="45"></div></div>
+        <div class="exo"><div><h3>Intervalles course <a class="info-badge" href="https://www.youtube.com/results?search_query=interval+running+30+90" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">5×(30’’ vite / 90’’ marche)</span></p></div><div class="sets" data-sets="5" data-key="d5-ints" data-rest="90"></div></div>
+      </article>
+
+      <article class="card">
+        <div class="section-title"><h2>Repas du jour</h2><span class="tag">Récup + glycogène</span></div>
+        <div class="rec"><div class="tile"><div class="donut" data-p="48" data-l="10" data-g="85" data-k="610"></div></div><div><h3>Poulet paprika & riz</h3><div class="kpi"><span class="pill">~610 kcal</span><span class="pill">P 48 g</span><span class="pill">L 10 g</span><span class="pill">G 85 g</span></div><p class="ingsline">Poulet 200 g <span class="sep">•</span> riz 80 g cru <span class="sep">•</span> yaourt 50 g <span class="sep">•</span> paprika/ail.</p><p class="line">Saisir poulet ; cuire riz ; sauce yaourt + paprika ; servir.</p></div></div>
+        <div class="rec"><div class="tile"><div class="donut" data-p="50" data-l="9" data-g="90" data-k="620"></div></div><div><h3>Pâtes arrabbiata + poulet</h3><div class="kpi"><span class="pill">~620 kcal</span><span class="pill">P 50 g</span><span class="pill">L 9 g</span><span class="pill">G 90 g</span></div><p class="ingsline">Pâtes 80 g cru <span class="sep">•</span> sauce tomate 200 g <span class="sep">•</span> poulet 150 g.</p><p class="line">Cuire pâtes ; saisir poulet ; napper de sauce ; mélanger.</p></div></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- J6 -->
+  <section class="day" data-day="6" hidden>
+    <div class="grid">
+      <article class="card">
+        <div class="section-title"><h2>Jour 6 — Intervalles course (35–45’)</h2><span class="tag">Objectif : 5 km &lt; 25’</span></div>
+        <div class="exo"><div><h3>Séance type <a class="info-badge" href="https://www.youtube.com/results?search_query=400m+interval+running" target="_blank">ⓘ</a></h3><p class="meta"><span class="chip">Échauffement 10’</span><span class="chip">6×400 m @ ~5:00/km (r:90’’)</span><span class="chip">Retour au calme 10’</span></p></div><div class="sets" data-sets="6" data-key="d6-400m" data-rest="90"></div></div>
+      </article>
+      <article class="card">
+        <h2>Hydratation & électrolytes</h2>
+        <p class="line">3–4 L/j ; si forte transpiration : pincée de sel + citron dans l’eau.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- J7 -->
+  <section class="day" data-day="7" hidden>
+    <div class="grid">
+      <article class="card">
+        <h2>Jour 7 — Repos / marche</h2>
+        <p class="line">10 000 pas si possible. Préparer la semaine (poulet, dinde, œufs, yaourt 0%, riz, légumes, tortillas, haricots…)</p>
+      </article>
+      <article class="card">
+        <h2>Rappels</h2>
+        <ul class="note"><li>Progression : RPE ≤8 → +1–2 reps ou +2 kg séance suivante.</li><li>Sommeil 7–8 h. Lever : lumière, eau, 5’ de marche.</li><li>Tabac : −5 cigarettes/sem.</li></ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- CHECK-IN -->
+  <section class="day" data-day="checkin" hidden>
+    <article class="card">
+      <div class="section-title"><h2>Check-in quotidien (20–22 h)</h2><span class="tag" id="ci_window">Fenêtre : vérification…</span></div>
+      <div class="form" style="margin-top:10px">
+        <div><label>Date</label><input id="ci_date" type="date"></div>
+        <div><label>Poids (kg)</label><input id="ci_weight" type="number" step="0.1"></div>
+        <div><label>Sommeil (0–10) <span id="ci_sleep_v"></span></label><input id="ci_sleep" class="range" type="range" min="0" max="10" step="1" value="0" oninput="ci_sleep_v.textContent=this.value"></div>
+        <div><label>Énergie (0–10) <span id="ci_energy_v"></span></label><input id="ci_energy" class="range" type="range" min="0" max="10" step="1" value="0" oninput="ci_energy_v.textContent=this.value"></div>
+        <div><label>Humeur (0–10) <span id="ci_mood_v"></span></label><input id="ci_mood" class="range" type="range" min="0" max="10" step="1" value="0" oninput="ci_mood_v.textContent=this.value"></div>
+        <div><label>Pas du jour</label><input id="ci_steps" type="number" step="100"></div>
+        <div><label>Perfs gym (exos + reps/temps)</label><textarea id="ci_perf" rows="3"></textarea></div>
+        <div><label>Alimentation (adhérence % + protéines g)</label><textarea id="ci_food" rows="3"></textarea></div>
+        <div><label>Étapes accomplies</label><textarea id="ci_done" rows="2"></textarea></div>
+        <div><label>Obstacles rencontrés</label><textarea id="ci_obst" rows="2"></textarea></div>
+        <div style="grid-column:1/-1"><label>Plan pour demain</label><textarea id="ci_plan" rows="2"></textarea></div>
+      </div>
+      <div class="actions" style="margin-top:8px;gap:8px">
+        <button class="btn" id="ci_save">Enregistrer</button>
+        <button class="btn" id="ci_copy">Copier le résumé</button>
+        <button class="btn" id="ci_export_csv">Exporter CSV</button>
+        <button class="btn" id="ci_export_json">Exporter JSON</button>
+        <button class="btn" id="ci_delete">Supprimer la date</button>
+      </div>
+      <table class="table" id="ci_table"><thead><tr><th>Date</th><th>S</th><th>E</th><th>H</th><th>Poids</th><th>Pas</th><th>Perfs</th><th>Alim</th><th>Étapes</th><th>Obstacles</th><th>Plan</th></tr></thead><tbody></tbody></table>
+    </article>
+  </section>
+
+  <!-- INFOS -->
+  <section class="day" data-day="infos" hidden>
+    <article class="card">
+      <div class="section-title"><h2>Infos & garde-fous</h2><span class="tag">Cap : Été 2026 — Esthétique + Performance</span></div>
+      <ul class="note">
+        <li><b>Pourquoi :</b> changer les habitudes, plaire physiquement, valider ce que tu entreprends.</li>
+        <li><b>Règles :</b> RPE 7–9 • Tempo contrôlé • 30–45 g prot/repas • 10k pas si possible • 7–8 h de sommeil.</li>
+        <li><b>Progression :</b> si facile (RPE ≤8) → +2 reps ou +2 kg la prochaine fois ; sinon répète.</li>
+        <li><b>Sécurité :</b> douleur inhabituelle → stop, variante + amplitude réduite.</li>
+      </ul>
+    </article>
+  </section>
+
 </main>
 
-<!-- ====== MODALES Focus / Minuteur (structure identique, style mis à jour via CSS ci-dessus) ====== -->
-<div class="modal" id="modalFocus" aria-hidden="true">
-  <div class="box" style="max-width:760px">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px">
-      <h2 class="focusTitle">Focus — <span id="fDay">Jour ?</span></h2>
-      <button class="btn" id="closeFocus">Fermer</button>
+<!-- ===== MODALES ===== -->
+<div class="modal" id="modalSupp">
+  <div class="box">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px">
+      <h2>Compléments — guide express</h2>
+      <button class="btn" id="closeSupp">Fermer</button>
     </div>
-    <div id="fBody"></div>
+    <div class="mod-grid">
+      <div class="card"><h3>Whey</h3><ul class="note"><li>25–35 g/prise pour atteindre 170–190 g protéines/j.</li></ul></div>
+      <div class="card"><h3>Créatine monohydrate</h3><ul class="note"><li>3–5 g/j, n’importe quand ; hydrate-toi bien.</li></ul></div>
+      <div class="card"><h3>Oméga-3</h3><ul class="note"><li>1–2 g EPA+DHA/j avec un repas gras.</li></ul></div>
+      <div class="card"><h3>Vitamine D3</h3><ul class="note"><li>1000–2000 UI/j (voir avis médical).</li></ul></div>
+      <div class="card"><h3>Magnésium (glycinate)</h3><ul class="note"><li>200–400 mg le soir.</li></ul></div>
+      <div class="card"><h3>Collagène</h3><ul class="note"><li>10 g/j (avec source Vit C) — tendons/peau.</li></ul></div>
+    </div>
   </div>
 </div>
 
-<div class="modal" id="modalTimer" aria-hidden="true">
+<div class="modal" id="modalTimer">
   <div class="box">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px">
-      <h2 style="margin:0">Minuteur de repos</h2>
+      <h2>Minuteur de repos</h2>
       <button class="btn" id="closeTimer">Fermer</button>
     </div>
     <div class="timer">
@@ -261,16 +405,53 @@ svg{display:block}
         <button class="tbtn" data-sec="60">60 s</button>
         <button class="tbtn" data-sec="90">90 s</button>
       </div>
-      <div class="preset">
-        <button class="tbtn" id="tStart">Démarrer</button>
-        <button class="tbtn" id="tStop">Stop</button>
-      </div>
+      <button class="tbtn" id="tStart">Démarrer</button>
+      <button class="tbtn" id="tStop">Stop</button>
     </div>
   </div>
 </div>
 
+<div class="modal" id="modalBadges">
+  <div class="box">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px">
+      <h2>Badges</h2>
+      <button class="btn" id="closeBadges">Fermer</button>
+    </div>
+    <div id="badgesList" class="mod-grid"></div>
+  </div>
+</div>
+
+<div class="modal" id="modalFocus">
+  <div class="box" style="max-width:760px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px">
+      <h2 class="focusTitle">Focus — <span id="fDay">Jour ?</span></h2>
+      <button class="btn" id="closeFocus">Fermer</button>
+    </div>
+    <div id="fBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="modalGroceries">
+  <div class="box">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px">
+      <h2>Courses (semaine type)</h2>
+      <button class="btn" id="closeGroceries">Fermer</button>
+    </div>
+    <div class="gbar">
+      <div class="switch"><input type="checkbox" id="gTravel"><label for="gTravel">Mode déplacement (ajouts portables)</label></div>
+      <button class="btn" id="gAll">Tout cocher</button>
+      <button class="btn" id="gNone">Tout décocher</button>
+      <button class="btn" id="gEdit">Éditer les prix</button>
+      <button class="btn" id="gCopy">Copier</button>
+      <button class="btn" id="gExport">Export .txt</button>
+    </div>
+    <div id="gList" class="glist"></div>
+    <p class="note" id="gTotal" style="margin-top:10px"><b>Total estimé :</b> 0,00 €</p>
+  </div>
+</div>
+
 <script>
-/* ====== NAV (identique) ====== */
+/* ===== NAV ===== */
 const nav=document.getElementById('nav');
 const btns=[...nav.querySelectorAll('button')];
 const days=[...document.querySelectorAll('.day')];
@@ -280,22 +461,23 @@ nav.addEventListener('click',e=>{
   btns.forEach(b=>b.classList.toggle('active',b===e.target));
   days.forEach(sec=>sec.hidden = sec.getAttribute('data-day')!==d);
   try{ e.target.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'}); }catch{}
-  window.scrollTo({ top: 0 });
+  window.scrollTo({ top: 0, behavior:'smooth' });
 });
 
-/* ====== HUD / XP (identique) ====== */
+/* ===== HUD / XP ===== */
 function getDB(){ try{return JSON.parse(localStorage.getItem('xpdb_v1')||'{}')}catch{return{}} }
 function setDB(db){ localStorage.setItem('xpdb_v1', JSON.stringify(db)) }
 function addXP(amount){
   const db=getDB();
   db.xp=Math.max(0,(db.xp||0)+amount);
   const today=new Date(); const dstr=today.toISOString().slice(0,10);
-  if(amount>0){
+  if(amount>0){ // streak uniquement à l'action positive
     if(db.lastActionDate!==dstr){
       const y=new Date(today); y.setDate(today.getDate()-1);
       const ystr=y.toISOString().slice(0,10);
       db.streak = (db.lastActionDate===ystr)? (db.streak||0)+1 : 1;
       db.lastActionDate=dstr;
+      checkBadges();
     }
   }
   setDB(db); renderHUD();
@@ -303,7 +485,7 @@ function addXP(amount){
 function renderHUD(){ const db=getDB(); const xp=db.xp||0; const lvl=Math.floor(xp/100)+1; const pct=(xp%100); document.getElementById('level').textContent=lvl; document.getElementById('xpfill').style.width=`${pct}%`; document.getElementById('streak').textContent=db.streak||0; }
 renderHUD();
 
-/* ====== Séries (XP ±5) ====== */
+/* ===== SÉRIES (persistantes) — XP ±5 + Timer auto ===== */
 function renderSets(){
   document.querySelectorAll('.sets').forEach(box=>{
     const n=+box.dataset.sets||3;
@@ -317,6 +499,9 @@ function renderSets(){
         const arr=[...box.querySelectorAll('input')].map(x=>x.checked?'1':'0');
         localStorage.setItem(key,arr.join(''));
         addXP(cb.checked?+5:-5);
+        const rest=+box.dataset.rest||0;
+        if(cb.checked && rest>0){ setTime(rest); openModal(modalTimer); }
+        unlock('series10'); unlock('series100');
       });
       const span=document.createElement('span'); span.textContent=`S${i+1}`;
       lbl.appendChild(cb); lbl.appendChild(span); box.appendChild(lbl);
@@ -324,31 +509,45 @@ function renderSets(){
   });
 }
 renderSets();
+
 document.getElementById('btnReset').addEventListener('click',()=>{
   const current = btns.find(b=>b.classList.contains('active')).getAttribute('data-day');
-  document.querySelectorAll(`section.day[data-day="${current}"] .sets`).forEach(box=>localStorage.removeItem(box.dataset.key));
+  document.querySelectorAll(`section.day[data-day="${current}"] .sets`).forEach(box=>{
+    localStorage.removeItem(box.dataset.key);
+  });
   renderSets(); alert('Séries réinitialisées pour le jour affiché.');
 });
 
-/* ====== Donuts macros ====== */
+/* ===== DONUTS MACROS ===== */
 function createDonut(el){
   const P=+el.dataset.p, L=+el.dataset.l, G=+el.dataset.g, K=el.dataset.k;
   const tot=Math.max(P+L+G,1);
   const p=Math.round(P/tot*100), l=Math.round(L/tot*100), g=100-p-l, C=2*Math.PI*50;
-  el.innerHTML = `
+  const svg=`
     <svg viewBox="0 0 120 120" width="110" height="110" aria-hidden="true">
       <circle cx="60" cy="60" r="50" stroke="#0c1330" stroke-width="16" fill="none"/>
       <g transform="rotate(-90 60 60)">
-        <circle cx="60" cy="60" r="50" stroke="#60a5fa" stroke-width="16" fill="none" stroke-dasharray="${(p/100)*C} ${C}" />
-        <circle cx="60" cy="60" r="50" stroke="#f472b6" stroke-width="16" fill="none" stroke-dasharray="${(l/100)*C} ${C}" stroke-dashoffset="-${(p/100)*C}" />
-        <circle cx="60" cy="60" r="50" stroke="#fbbf24" stroke-width="16" fill="none" stroke-dasharray="${(g/100)*C} ${C}" stroke-dashoffset="-${((p+l)/100)*C}" />
+        <circle cx="60" cy="60" r="50" stroke="#60a5fa" stroke-width="16" fill="none" stroke-dasharray="${(p/100)*C} ${C}" stroke-dashoffset="0"/>
+        <circle cx="60" cy="60" r="50" stroke="${'#f472b6'}" stroke-width="16" fill="none" stroke-dasharray="${(l/100)*C} ${C}" stroke-dashoffset="-${(p/100)*C}"/>
+        <circle cx="60" cy="60" r="50" stroke="${'#fbbf24'}" stroke-width="16" fill="none" stroke-dasharray="${(g/100)*C} ${C}" stroke-dashoffset="-${((p+l)/100)*C}"/>
       </g>
-    </svg>
-    <div class="mid">${K}<br><span style="font-size:11px;color:#bcd0ff">kcal</span></div>`;
+    </svg>`;
+  el.innerHTML = svg + `<div class="mid">${K}<br><span style="font-size:11px;color:#bcd0ff">kcal</span></div>`;
 }
 document.querySelectorAll('.donut').forEach(createDonut);
 
-/* ====== Minuteur ====== */
+/* ===== MODALES ===== */
+function openModal(m){ m.classList.add('open'); m.setAttribute('aria-hidden','false'); document.body.dataset.modalOpen="1"; }
+function closeModal(m){ m.classList.remove('open'); m.setAttribute('aria-hidden','true'); if(!document.querySelector('.modal.open')) delete document.body.dataset.modalOpen; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ document.querySelectorAll('.modal.open').forEach(closeModal) }});
+
+/* Compléments */
+const modalSupp=document.getElementById('modalSupp');
+document.getElementById('btnSupp').addEventListener('click',()=>openModal(modalSupp));
+document.getElementById('closeSupp').addEventListener('click',()=>closeModal(modalSupp));
+modalSupp.addEventListener('click',e=>{if(e.target===modalSupp) closeModal(modalSupp)});
+
+/* Minuteur */
 const modalTimer=document.getElementById('modalTimer');
 const tDisplay=document.getElementById('tDisplay');
 let tRemaining=0, tHandle=null;
@@ -365,31 +564,83 @@ document.querySelectorAll('.tbtn[data-sec]').forEach(b=>b.addEventListener('clic
 document.getElementById('tStart').addEventListener('click',()=>{ if(tHandle) clearInterval(tHandle); tHandle=setInterval(tick,1000) });
 document.getElementById('tStop').addEventListener('click',()=>{ if(tHandle){clearInterval(tHandle);tHandle=null;} });
 
-/* ====== Focus séance (avec bulles stylées) ====== */
+/* Badges */
+const modalBadges=document.getElementById('modalBadges');
+document.getElementById('btnBadges').addEventListener('click',()=>{ renderBadges(); openModal(modalBadges); });
+document.getElementById('closeBadges').addEventListener('click',()=>closeModal(modalBadges));
+modalBadges.addEventListener('click',e=>{ if(e.target===modalBadges) closeModal(modalBadges) });
+function unlock(id){ const db=getDB(); db.badges=db.badges||{}; db.badges[id]=true; setDB(db) }
+function have(id){ const db=getDB(); return db.badges&&db.badges[id] }
+function checkBadges(){
+  const db=getDB();
+  const ci=JSON.parse(localStorage.getItem('checkins_v1')||'{}'); if(Object.keys(ci).length>0) unlock('firstcheck');
+  let total=0; Object.keys(localStorage).forEach(k=>{ if(k.startsWith('d')&&k.includes('-')){ const v=localStorage.getItem(k)||''; total+=v.split('').filter(x=>x==='1').length }});
+  if(total>=10) unlock('series10'); if(total>=100) unlock('series100');
+  if((db.streak||0)>=3) unlock('streak3'); if((db.streak||0)>=7) unlock('streak7');
+  setDB(db);
+}
+function badgeCard(ok,title,desc){ return `<div class="card" style="opacity:${ok?1:.45}"><h3>${ok?'🏅':'🔒'} ${title}</h3><p class="note" style="margin:6px 0 0">${desc}</p></div>`}
+function renderBadges(){
+  checkBadges();
+  const list=document.getElementById('badgesList');
+  list.innerHTML=[
+    badgeCard(have('firstcheck'),'Premier check-in','Tu as enregistré au moins une journée.'),
+    badgeCard(have('series10'),'10 séries cochées','Tu as validé 10 séries.'),
+    badgeCard(have('series100'),'100 séries cochées','Tu as validé 100 séries.'),
+    badgeCard(have('streak3'),'Flamme 3 jours','3 jours d’affilée.'),
+    badgeCard(have('streak7'),'Flamme 7 jours','7 jours d’affilée.')
+  ].join('');
+}
+
+/* Check-in (20–22 h) */
+const d=document;
+const ci_date=d.getElementById('ci_date');
+const ci_weight=d.getElementById('ci_weight');
+const ci_sleep=d.getElementById('ci_sleep'), ci_sleep_v=d.getElementById('ci_sleep_v');
+const ci_energy=d.getElementById('ci_energy'), ci_energy_v=d.getElementById('ci_energy_v');
+const ci_mood=d.getElementById('ci_mood'), ci_mood_v=d.getElementById('ci_mood_v');
+const ci_steps=d.getElementById('ci_steps');
+const ci_perf=d.getElementById('ci_perf');
+const ci_food=d.getElementById('ci_food');
+const ci_done=d.getElementById('ci_done');
+const ci_obst=d.getElementById('ci_obst');
+const ci_plan=d.getElementById('ci_plan');
+const ci_table=d.getElementById('ci_table')?.querySelector('tbody');
+const ci_window=document.getElementById('ci_window');
+function todayStr(){ const t=new Date(); const z=t.getTimezoneOffset()*60000; return new Date(Date.now()-z).toISOString().slice(0,10) }
+function inWindow(){ const h=(new Date()).getHours(); return h>=20 && h<22 }
+function loadStore(){ try{ return JSON.parse(localStorage.getItem('checkins_v1')||'{}'); }catch{ return {}; } }
+function saveStore(obj){ localStorage.setItem('checkins_v1', JSON.stringify(obj)); }
+function fillForm(entry){ ci_weight.value=entry.weight||''; ci_sleep.value=entry.sleep??0; ci_sleep_v.textContent=ci_sleep.value; ci_energy.value=entry.energy??0; ci_energy_v.textContent=ci_energy.value; ci_mood.value=entry.mood??0; ci_mood_v.textContent=ci_mood.value; ci_steps.value=entry.steps||''; ci_perf.value=entry.perf||''; ci_food.value=entry.food||''; ci_done.value=entry.done||''; ci_obst.value=entry.obst||''; ci_plan.value=entry.plan||''; }
+function formToEntry(){ return {date: ci_date.value, weight: ci_weight.value, sleep:+ci_sleep.value, energy:+ci_energy.value, mood:+ci_mood.value, steps: ci_steps.value, perf: ci_perf.value, food: ci_food.value, done: ci_done.value, obst: ci_obst.value, plan: ci_plan.value }; }
+function renderTable(){ if(!ci_table) return; const db=loadStore(); const dates=Object.keys(db).sort().reverse(); ci_table.innerHTML=''; dates.forEach(dt=>{ const e=db[dt]; const tr=d.createElement('tr'); tr.innerHTML=`<td>${dt}</td><td>${e.sleep??''}</td><td>${e.energy??''}</td><td>${e.mood??''}</td><td>${e.weight??''}</td><td>${e.steps??''}</td><td>${(e.perf||'').replace(/\n/g,' / ')}</td><td>${(e.food||'').replace(/\n/g,' / ')}</td><td>${(e.done||'').replace(/\n/g,' / ')}</td><td>${(e.obst||'').replace(/\n/g,' / ')}</td><td>${(e.plan||'').replace(/\n/g,' / ')}</td>`; ci_table.appendChild(tr); }); }
+function toCSV(db){ const head=['date','sleep','energy','mood','weight','steps','perf','food','done','obst','plan']; const rows=[head.join(',')]; Object.keys(db).sort().forEach(dt=>{ const e=db[dt]; const row=head.map(k=>`"${(e[k]??'').toString().replace(/"/g,'""').replace(/\n/g,' / ')}"`).join(','); rows.push(row); }); return rows.join('\n'); }
+function download(filename, text){ const blob=new Blob([text], {type: 'text/plain;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=d.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }
+function copySummary(){ const e=formToEntry(); const line = `Sommeil ${e.sleep} | Énergie ${e.energy} | Humeur ${e.mood} | Poids ${e.weight} kg | Perfs gym ${e.perf} | Alimentation ${e.food} | Pas du jour ${e.steps} | Étapes accomplies ${e.done} | Obstacles rencontrés ${e.obst} | Plan pour demain ${e.plan}.`; navigator.clipboard.writeText(line).then(()=>alert('Résumé copié.')); }
+(function initCI(){ const dateEl=d.getElementById('ci_date'); if(!dateEl) return; dateEl.value = todayStr(); ci_sleep_v.textContent=ci_sleep.value; ci_energy_v.textContent=ci_energy.value; ci_mood_v.textContent=ci_mood.value; const db=loadStore(); if(db[dateEl.value]) fillForm(db[dateEl.value]); renderTable(); function updWin(){ ci_window.textContent = inWindow()? 'Fenêtre OUVERTE (20–22 h)': 'Fenêtre fermée (remplis si besoin)'; } updWin(); setInterval(updWin, 60000); })();
+d.getElementById('ci_save')?.addEventListener('click', ()=>{ const db=loadStore(); const entry=formToEntry(); if(!entry.date){ alert('Choisis une date.'); return; } db[entry.date]=entry; saveStore(db); renderTable(); alert('Check-in enregistré.'); addXP(25); unlock('firstcheck'); checkBadges(); });
+d.getElementById('ci_copy')?.addEventListener('click', copySummary);
+d.getElementById('ci_export_csv')?.addEventListener('click', ()=>{ download('checkins.csv', toCSV(loadStore())); });
+d.getElementById('ci_export_json')?.addEventListener('click', ()=>{ download('checkins.json', JSON.stringify(loadStore(), null, 2)); });
+d.getElementById('ci_delete')?.addEventListener('click', ()=>{ const dt=ci_date.value; if(!dt) return; const db=loadStore(); delete db[dt]; saveStore(db); if(dt===todayStr()) fillForm({}); renderTable(); alert('Entrée supprimée.'); });
+
+/* Focus séance */
 const modalFocus=document.getElementById('modalFocus');
 const fDay=document.getElementById('fDay');
 const fBody=document.getElementById('fBody');
 let FCTX=null;
-
-function openModal(m){ m.classList.add('open'); m.setAttribute('aria-hidden','false'); }
-function closeModal(m){ m.classList.remove('open'); m.setAttribute('aria-hidden','true'); }
-
-document.getElementById('btnFocus').addEventListener('click',()=>{
-  FCTX=buildFocusFromDay(); openModal(modalFocus); focusRender();
-});
-document.getElementById('closeFocus').addEventListener('click',()=>closeModal(modalFocus));
-modalFocus.addEventListener('click',e=>{ if(e.target===modalFocus) closeModal(modalFocus) });
-
 function currentDaySection(){ const b=btns.find(b=>b.classList.contains('active')); return document.querySelector(`section.day[data-day="${b.getAttribute('data-day')}"]`) }
 function buildFocusFromDay(){
   const sec=currentDaySection(); const dayLabel=btns.find(b=>b.classList.contains('active')).textContent;
+  if(!sec) return null;
   const exos=[...sec.querySelectorAll('.grid .card:first-child .exo')].map(ex=>{
     const name=ex.querySelector('h3')?.textContent.replace('ⓘ','').trim()||'Exercice';
     const meta=ex.querySelector('.meta')?.textContent||'';
     const sets=+ex.querySelector('.sets')?.dataset.sets||3;
     const key=ex.querySelector('.sets')?.dataset.key||('key-'+name);
     const tips=ex.querySelector('details')?.outerHTML||'';
-    return {name, meta, sets, key, tips};
+    const rest=+ex.querySelector('.sets')?.dataset.rest||0;
+    return {name, meta, sets, key, tips, rest};
   });
   return {dayLabel, exos, idx:0};
 }
@@ -405,13 +656,14 @@ function focusRender(){
     <h3 class="focusTitle">${ex.name}</h3>
     <div class="focusMeta">${ex.meta}</div>
     ${ex.tips||''}
-    <div id="fSet" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px"></div>
+    <div class="fSet" id="fSet"></div>
     <div class="progress">Séries : <b>${doneCount}</b> / ${ex.sets}</div>
-    <div class="focusTimer">
-      <span class="small">Repos rapide :</span>
+    <div class="focusTimer" style="margin-top:6px">
+      <span class="note">Repos rapide :</span>
       <button class="tbtn" data-sec="30">30s</button>
       <button class="tbtn" data-sec="60">60s</button>
       <button class="tbtn" data-sec="90">90s</button>
+      ${ex.rest?`<button class="tbtn" data-sec="${ex.rest}">${ex.rest}s</button>`:''}
       <button class="tbtn" id="fNextSet">Valider une série</button>
     </div>
     <div class="fNav" style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:10px">
@@ -420,28 +672,150 @@ function focusRender(){
       <button class="btn" id="fNext">${doneCount===ex.sets?'Suivant →':'Suivant (après séries)'}</button>
     </div>
   `;
-  const holder=document.getElementById('fSet');
+  const holder=d.getElementById('fSet');
   for(let i=0;i<ex.sets;i++){
-    const b=document.createElement('div'); b.className='bubble'+(doneArr[i]?' done':''); b.textContent=i+1;
-    b.addEventListener('click',()=>{ const newVal=!doneArr[i]; doneArr[i]=newVal; setSetState(ex.key,doneArr); addXP(newVal?+5:-5); b.classList.toggle('done',newVal); });
+    const b=d.createElement('div'); b.className='bubble'+(doneArr[i]?' done':''); b.textContent=i+1;
+    b.addEventListener('click',()=>{ const newVal=!doneArr[i]; doneArr[i]=newVal; setSetState(ex.key,doneArr); addXP(newVal?+5:-5); if(newVal && ex.rest) { setTime(ex.rest); openModal(modalTimer);} focusRender(); });
     holder.appendChild(b);
   }
-  document.querySelectorAll('#fBody .tbtn[data-sec]').forEach(b=>b.addEventListener('click',()=>{ setTime(+b.dataset.sec); openModal(modalTimer); }));
-  document.getElementById('fNextSet').onclick=()=>{
+  fBody.querySelectorAll('.focusTimer .tbtn[data-sec]').forEach(b=>b.addEventListener('click',()=>{ setTime(+b.dataset.sec); openModal(modalTimer); }));
+  d.getElementById('fPrev').onclick=()=>{ if(FCTX.idx>0){FCTX.idx--; focusRender();} }
+  d.getElementById('fNext').onclick=()=>{ if(doneArr.every(Boolean) && FCTX.idx<FCTX.exos.length-1){FCTX.idx++; focusRender();} else if(!doneArr.every(Boolean)){ alert('Valide toutes les séries avant de passer au suivant.'); } else { closeModal(modalFocus); alert('Séance terminée. GG !'); } }
+  d.getElementById('fResetExo').onclick=()=>{ setSetState(ex.key, new Array(ex.sets).fill(false)); focusRender(); }
+  d.getElementById('fNextSet').onclick=()=>{
     const i=doneArr.findIndex(v=>!v);
-    if(i>-1){ doneArr[i]=true; setSetState(ex.key,doneArr); addXP(5); focusRender(); }
+    if(i>-1){ doneArr[i]=true; setSetState(ex.key,doneArr); addXP(5); if(ex.rest){ setTime(ex.rest); openModal(modalTimer);} focusRender(); }
   }
-  document.getElementById('fPrev').onclick=()=>{ if(FCTX.idx>0){FCTX.idx--; focusRender();} }
-  document.getElementById('fResetExo').onclick=()=>{ setSetState(ex.key, new Array(ex.sets).fill(false)); focusRender(); }
-  document.getElementById('fNext').onclick=()=>{ if(doneArr.every(Boolean) && FCTX.idx<FCTX.exos.length-1){FCTX.idx++; focusRender();} else if(!doneArr.every(Boolean)){ alert('Valide toutes les séries avant de passer au suivant.'); } else { closeModal(modalFocus); alert('Séance terminée. GG !'); } }
 }
+document.getElementById('btnFocus').addEventListener('click',()=>{ FCTX=buildFocusFromDay(); openModal(modalFocus); focusRender(); });
+document.getElementById('closeFocus').addEventListener('click',()=>closeModal(modalFocus));
+modalFocus.addEventListener('click',e=>{ if(e.target===modalFocus) closeModal(modalFocus) });
 
-/* ====== PWA: SW ====== */
+/* Courses + prix (avec total) */
+const modalGroceries=document.getElementById('modalGroceries');
+document.getElementById('btnGroceries').addEventListener('click',()=>{ renderGroceries(); openModal(modalGroceries); });
+document.getElementById('closeGroceries').addEventListener('click',()=>closeModal(modalGroceries));
+modalGroceries.addEventListener('click',e=>{ if(e.target===modalGroceries) closeModal(modalGroceries) });
+const gListEl=document.getElementById('gList');
+const gTravel=document.getElementById('gTravel');
+const gKey='groceries_v1'; const gStateKey='groceries_state_v1'; const gPriceKey='groceries_prices_v1';
+let gEdit=false;
+function baseGroceries(){
+  const travel = gTravel.checked;
+  return [
+    {cat:'Protéines', items:[
+      {id:'poulet', label:'Poulet filets', qty:'1.2 kg (6×200 g)', price:10.50},
+      {id:'dinde', label:'Dinde (tranches/cuisson)', qty:'400–600 g', price:5.00},
+      {id:'boeuf5', label:'Bœuf 5% (chili)', qty:'600 g', price:9.20},
+      {id:'oeufs', label:'Œufs', qty:'12', price:3.20},
+      {id:'skyr', label:'Skyr / yaourt grec 0%', qty:'1 kg', price:3.50},
+      {id:'fromageblanc', label:'Fromage blanc 0%', qty:'1 kg', price:2.80},
+      {id:'whey', label:'Whey', qty:'1 pot', price:24.00}
+    ]},
+    {cat:'Féculents & légumineuses', items:[
+      {id:'riz', label:'Riz basmati', qty:'1 kg', price:2.20},
+      {id:'pates', label:'Pâtes complètes', qty:'500 g', price:1.30},
+      {id:'tortillas', label:'Tortillas complètes', qty:'8 pcs', price:2.30},
+      {id:'avoine', label:'Flocons d’avoine', qty:'500 g', price:1.30},
+      {id:'haricots', label:'Haricots rouges (boîte)', qty:'2×400 g', price:2.00}
+    ]},
+    {cat:'Légumes & fruits', items:[
+      {id:'salade', label:'Salade verte', qty:'1–2', price:2.50},
+      {id:'tomates', label:'Tomates', qty:'6', price:2.50},
+      {id:'concombre', label:'Concombre', qty:'1–2', price:1.40},
+      {id:'mais', label:'Maïs (boîte)', qty:'2×140 g', price:1.80},
+      {id:'oignons', label:'Oignons', qty:'3–4', price:1.20},
+      {id:'citron', label:'Citron', qty:'2–3', price:1.20},
+      {id:'avocat', label:'Avocat', qty:'2', price:2.80},
+      {id:'surgeles', label:'Mélange légumes surgelés', qty:'1–2 kg', price:3.50},
+      {id:'bananes', label:'Bananes', qty:'6', price:1.80},
+      {id:'pommes', label:'Pommes', qty:'6', price:2.50}
+    ]},
+    {cat:'Épicerie & condiments', items:[
+      {id:'yaourt0', label:'Yaourt 0% (sauces)', qty:'6×125 g', price:2.20},
+      {id:'epices', label:'Paprika, ail, cumin, chili', qty:'assortiment', price:3.00},
+      {id:'selpoivre', label:'Sel, poivre', qty:'—', price:1.00},
+      {id:'huile', label:'Huile d’olive', qty:'750 ml', price:7.90}
+    ]},
+    {cat:'Snacks utiles', items:[
+      {id:'galettes', label:'Galettes de riz', qty:'1 paquet', price:1.50},
+      {id:'noix', label:'Noix/amandes', qty:'200 g', price:3.50},
+      {id:'fruits', label:'Fruits portables', qty:'bananes/pommes', price:3.00}
+    ]},
+    {cat:'Compléments', items:[
+      {id:'creatine', label:'Créatine monohydrate', qty:'500 g', price:16.00},
+      {id:'omega3', label:'Oméga-3', qty:'1 flacon', price:14.00},
+      {id:'vitd3', label:'Vitamine D3', qty:'1 flacon', price:9.00},
+      {id:'mag', label:'Magnésium (glycinate)', qty:'1 boîte', price:12.00},
+      {id:'collagene', label:'Collagène', qty:'300–500 g', price:20.00}
+    ]},
+    ...(travel ? [{
+      cat:'+ Mode déplacement (ajouts)',
+      items:[
+        {id:'rizmicro', label:'Riz micro-ondes 2–3 min', qty:'3 sachets', price:3.60},
+        {id:'saucetomate', label:'Sauce tomate (brique)', qty:'2×500 g', price:2.40},
+        {id:'wrapkit', label:'Kit wraps + crudités', qty:'2–3 repas', price:7.00},
+        {id:'proteinesec', label:'Jambon de dinde sous vide', qty:'300–400 g', price:3.50}
+      ]
+    }]:[])
+  ];
+}
+function loadGState(){ try{return JSON.parse(localStorage.getItem(gStateKey)||'{}')}catch{return{}} }
+function saveGState(s){ localStorage.setItem(gStateKey, JSON.stringify(s)) }
+function loadPrices(){ try{return JSON.parse(localStorage.getItem(gPriceKey)||'{}')}catch{return{}} }
+function savePrices(p){ localStorage.setItem(gPriceKey, JSON.stringify(p)) }
+
+function renderGroceries(){
+  const state=loadGState(); gTravel.checked=!!state.travel;
+  const data=baseGroceries();
+  const checked=JSON.parse(localStorage.getItem(gKey)||'{}');
+  const prices=loadPrices();
+  gListEl.innerHTML='';
+  let total=0;
+
+  data.forEach(block=>{
+    const wrap=document.createElement('div'); wrap.className='gcat';
+    wrap.innerHTML=`<h3>${block.cat}</h3>`;
+    block.items.forEach(it=>{
+      const id=`g-${it.id}`;
+      const price = (prices[it.id] ?? it.price ?? 0);
+      const row=document.createElement('div'); row.className='item';
+      row.innerHTML=`
+        <label><input type="checkbox" id="${id}"><span>${it.label} <span class="qty">(${it.qty})</span></span></label>
+        <div class="price">
+          ${gEdit ? `<input class="edit" type="number" step="0.01" data-id="${it.id}" value="${price.toFixed(2)}"> €`
+                  : `≈ ${price.toFixed(2)} €`}
+        </div>`;
+      const cb=row.querySelector('input'); cb.checked=!!checked[it.id];
+      cb.addEventListener('change',()=>{ checked[it.id]=cb.checked; localStorage.setItem(gKey, JSON.stringify(checked)); renderGroceries(); });
+      const inp=row.querySelector('input.edit'); if(inp){ inp.addEventListener('input',()=>{ prices[it.id]=+inp.value||0; savePrices(prices); }); }
+      wrap.appendChild(row);
+      if(cb.checked) total += Number(price)||0;
+    });
+    gListEl.appendChild(wrap);
+  });
+  document.getElementById('gTotal').innerHTML = `<b>Total estimé :</b> ${total.toFixed(2)} €`;
+}
+document.getElementById('gEdit').addEventListener('click',()=>{ gEdit=!gEdit; renderGroceries(); });
+gTravel.addEventListener('change',()=>{ const s=loadGState(); s.travel=gTravel.checked; saveGState(s); renderGroceries(); });
+document.getElementById('gAll').addEventListener('click',()=>{ const data=baseGroceries(); const obj={}; data.forEach(b=>b.items.forEach(i=>obj[i.id]=true)); localStorage.setItem(gKey, JSON.stringify(obj)); renderGroceries(); });
+document.getElementById('gNone').addEventListener('click',()=>{ localStorage.setItem(gKey, JSON.stringify({})); renderGroceries(); });
+document.getElementById('gCopy').addEventListener('click',()=>{ const lines=[]; gListEl.querySelectorAll('.gcat').forEach(cat=>{ const title=cat.querySelector('h3').textContent; const items=[...cat.querySelectorAll('.item')].filter(i=>i.querySelector('input[type=checkbox]').checked).map(i=>'- '+i.querySelector('label').innerText.trim()); if(items.length){ lines.push(title); lines.push(...items,''); } }); const txt=lines.join('\n'); navigator.clipboard.writeText(txt).then(()=>alert('Liste copiée.')); });
+document.getElementById('gExport').addEventListener('click',()=>{ const lines=[]; gListEl.querySelectorAll('.gcat').forEach(cat=>{ const title=cat.querySelector('h3').textContent; const items=[...cat.querySelectorAll('.item')].filter(i=>i.querySelector('input[type=checkbox]').checked).map(i=>'- '+i.querySelector('label').innerText.trim()); if(items.length){ lines.push(title); lines.push(...items,''); } }); const txt=lines.join('\n'); const blob=new Blob([txt],{type:'text/plain;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=d.createElement('a'); a.href=url; a.download='courses.txt'; a.click(); URL.revokeObjectURL(url); });
+
+/* PWA */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./service-worker.js').catch(console.error);
   });
 }
+
+/* INIT */
+(function(){ // donut macros
+  document.querySelectorAll('.donut').forEach(createDonut);
+  // check-in window label
+  const ciw=document.getElementById('ci_window'); if(ciw){ const upd=()=>{ ciw.textContent=(new Date().getHours()>=20 && new Date().getHours()<22)?'Fenêtre OUVERTE (20–22 h)':'Fenêtre fermée (remplis si besoin)'; }; upd(); setInterval(upd,60*1000); }
+})();
 </script>
 </body>
 </html>
