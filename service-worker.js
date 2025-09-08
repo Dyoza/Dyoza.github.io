@@ -1,5 +1,5 @@
 /* SW — cache app-shell + offline (robuste) */
-const CACHE_VERSION = 'v1.0.8';
+const CACHE_VERSION = 'v1.0.9';
 const BASE = self.registration.scope;
 
 const ASSETS = [
