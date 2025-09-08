@@ -3,10 +3,12 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>Transformation — Semaine type (v1.7)</title>
+<title>Transformation — Semaine type (v1.8 final)</title>
 
+<!-- PWA -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0e1224">
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
@@ -15,21 +17,22 @@
   --bg:#0e1224; --ink:#eef2ff; --muted:#a5b4fc; --card:#121735; --panel:#161d44; --border:#26306b;
   --accent:#7dd3fc; --ok:#22c55e; --warn:#f59e0b; --danger:#ef4444; --pink:#f472b6; --gold:#fbbf24;
   --ring:0 0 0 2px rgba(125,211,252,.45);
+  --header-h: 86px; /* sera recalculée en JS */
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:linear-gradient(180deg,#0e1224,#0a0f21 70%);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
 a{color:inherit}
 
-/* ===== Header sticky (design d’origine) ===== */
+/* === EN-TÊTE FIXE (desktop + iPhone) === */
 header.sticky{
-  position: fixed;      /* <- fixe */
-  top: 0; left: 0; right: 0;
-  z-index: 40;          /* au-dessus du contenu, sous les modales */
-  background: rgba(14,18,36,.85);
-  backdrop-filter: saturate(1.1) blur(8px);
-  border-bottom: 1px solid rgba(255,255,255,.07);
-  padding-top: env(safe-area-inset-top); /* notch iPhone */
+  position:fixed; top:0; left:0; right:0; z-index:40;
+  background:rgba(14,18,36,.85);
+  backdrop-filter:saturate(1.1) blur(8px);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  padding-top: env(safe-area-inset-top);
 }
+body{ padding-top: var(--header-h); }
+
 .wrap{max-width:1100px;margin:0 auto;padding:20px}
 .headbar{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 20px}
 .brand{display:flex;gap:10px;align-items:center}
@@ -86,12 +89,9 @@ header.sticky{
 .donut{position:relative;width:110px;height:110px}
 svg{display:block}
 .donut .mid{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#dfe6ff}
-.swatch{display:flex;gap:6px;align-items:center}
-.swatch::before{content:"";width:10px;height:10px;border-radius:2px;display:inline-block}
-.swatch.p::before{background:#60a5fa}.swatch.l::before{background:#f472b6}.swatch.g::before{background:#fbbf24}
 
-/* Modales (Focus / Minuteur / Badges / Supps / Courses) */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
+/* Modales */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:18px;z-index:9999}
 .modal.open{display:flex}
 .modal .box{max-width:920px;background:linear-gradient(180deg,#141a3a,#111633);border:1px solid var(--border);border-radius:16px;padding:16px;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.45);position:relative}
 .mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -184,8 +184,9 @@ svg{display:block}
 
 <main class="wrap">
 
-  <!-- ===== JOURS (1 à 7) ===== -->
-  <!-- J1 -->
+  <!-- ===== JOURS ===== -->
+
+  <!-- Jour 1 -->
   <section class="day" data-day="1">
     <div class="grid">
       <article class="card">
@@ -196,7 +197,7 @@ svg{display:block}
             <h3>Goblet Squat <a class="info-badge" href="https://www.youtube.com/results?search_query=goblet+squat" target="_blank" rel="noopener">ⓘ</a></h3>
             <p class="meta"><span class="chip">4×8–12</span><span class="chip">RPE 7–8</span><span class="chip">Tempo 3–1–2</span><span class="chip">Repos 90s</span></p>
             <details><summary>Comment faire</summary>
-              <ul class="note"><li>Pieds largeur épaules, haltère collé au torse.</li><li>Descends 3s (cuisses //), stop 1s, remonte 2s.</li><li>Genoux dans l’axe, talons au sol, abdos gainés.</li></ul>
+              <ul class="note"><li>Pieds largeur épaules, haltère collé au torse.</li><li>Descends 3s, stop 1s, remonte 2s.</li><li>Genoux dans l’axe, talons au sol, abdos gainés.</li></ul>
             </details>
           </div>
           <div class="sets" data-sets="4" data-key="d1-goblet" data-rest="90"></div>
@@ -210,32 +211,32 @@ svg{display:block}
       </article>
 
       <article class="card">
-        <div class="section-title"><h2>Repas du jour (2 au choix)</h2><span class="tag">Cible : ~170–190 g prots/j</span></div>
+        <div class="section-title"><h2>Repas du jour (2 au choix)</h2><span class="tag">Cible : ~170–190 g prot/j</span></div>
 
         <div class="rec">
           <div class="tile"><div class="donut" data-p="55" data-l="12" data-g="35" data-k="510"></div></div>
           <div>
             <h3>Salade poulet croquante (≈15’)</h3>
             <div class="kpi"><span class="pill">~510 kcal</span><span class="pill">P 55 g</span><span class="pill">L 12 g</span><span class="pill">G 35 g</span></div>
-            <p class="ingsline">Ingrédients : Poulet 180 g <span class="sep">•</span> salade <span class="sep">•</span> tomate <span class="sep">•</span> concombre <span class="sep">•</span> maïs 60 g <span class="sep">•</span> yaourt 0% 150 g <span class="sep">•</span> citron <span class="sep">•</span> herbes.</p>
-            <p class="line">Saisir le poulet 6–8 min ; mélanger légumes + yaourt + citron + herbes ; ajouter le poulet, mélanger et servir.</p>
+            <p class="ingsline">Poulet 180 g <span class="sep">•</span> salade <span class="sep">•</span> tomate <span class="sep">•</span> concombre <span class="sep">•</span> maïs 60 g <span class="sep">•</span> yaourt 0% 150 g <span class="sep">•</span> citron <span class="sep">•</span> herbes.</p>
+            <p class="line">Saisir le poulet 6–8 min ; mélanger légumes + yaourt + citron + herbes ; ajouter le poulet et servir.</p>
           </div>
         </div>
 
         <div class="rec">
           <div class="tile"><div class="donut" data-p="45" data-l="16" data-g="60" data-k="600"></div></div>
           <div>
-            <h3>Chili express (batch 2 portions)</h3>
+            <h3>Chili express (2 portions)</h3>
             <div class="kpi"><span class="pill">~600 kcal/portion</span><span class="pill">P 45 g</span><span class="pill">L 16 g</span><span class="pill">G 60 g</span></div>
             <p class="ingsline">Bœuf 5% 300 g <span class="sep">•</span> haricots rouges 240 g <span class="sep">•</span> tomate 400 g <span class="sep">•</span> oignon <span class="sep">•</span> épices.</p>
-            <p class="line">Suer oignon + épices 2–3 min ; saisir le bœuf 4–5 min ; ajouter tomate + haricots ; mijoter 15–20 min jusqu’à épaississement.</p>
+            <p class="line">Suer oignon+épices 2–3 min ; saisir bœuf 4–5 min ; ajouter tomate+haricots ; mijoter 15–20 min.</p>
           </div>
         </div>
       </article>
     </div>
   </section>
 
-  <!-- J2 -->
+  <!-- Jour 2 -->
   <section class="day" data-day="2" hidden>
     <div class="grid">
       <article class="card">
@@ -246,13 +247,13 @@ svg{display:block}
       </article>
       <article class="card">
         <div class="section-title"><h2>Repas du jour</h2><span class="tag">Satiété & récup</span></div>
-        <div class="rec"><div class="tile"><div class="donut" data-p="45" data-l="12" data-g="45" data-k="480"></div></div><div><h3>Wrap dinde-fromage blanc</h3><div class="kpi"><span class="pill">~480 kcal</span><span class="pill">P 45 g</span><span class="pill">L 12 g</span><span class="pill">G 45 g</span></div><p class="ingsline">Tortilla complète <span class="sep">•</span> dinde 120 g <span class="sep">•</span> fromage blanc 0% 100 g <span class="sep">•</span> salade <span class="sep">•</span> tomate.</p><p class="line">Tartiner, garnir, rouler serré, toaster 1–2 min/face pour souder.</p></div></div>
-        <div class="rec"><div class="tile"><div class="donut" data-p="38" data-l="9" data-g="55" data-k="430"></div></div><div><h3>Overnight Oats protéiné</h3><div class="kpi"><span class="pill">~430 kcal</span><span class="pill">P 38 g</span><span class="pill">L 9 g</span><span class="pill">G 55 g</span></div><p class="ingsline">Lait 200 ml <span class="sep">•</span> yaourt 100 g <span class="sep">•</span> avoine 60 g <span class="sep">•</span> whey 30 g.</p><p class="line">Mélanger dans un bocal ; repos frigo 4 h (ou nuit) ; déguster.</p></div></div>
+        <div class="rec"><div class="tile"><div class="donut" data-p="45" data-l="12" data-g="45" data-k="480"></div></div><div><h3>Wrap dinde-fromage blanc</h3><div class="kpi"><span class="pill">~480 kcal</span><span class="pill">P 45 g</span><span class="pill">L 12 g</span><span class="pill">G 45 g</span></div><p class="ingsline">Tortilla complète <span class="sep">•</span> dinde 120 g <span class="sep">•</span> fromage blanc 0% 100 g <span class="sep">•</span> salade <span class="sep">•</span> tomate.</p><p class="line">Tartiner, garnir, rouler serré, toaster 1–2 min/face.</p></div></div>
+        <div class="rec"><div class="tile"><div class="donut" data-p="38" data-l="9" data-g="55" data-k="430"></div></div><div><h3>Overnight Oats protéiné</h3><div class="kpi"><span class="pill">~430 kcal</span><span class="pill">P 38 g</span><span class="pill">L 9 g</span><span class="pill">G 55 g</span></div><p class="ingsline">Lait 200 ml <span class="sep">•</span> yaourt 100 g <span class="sep">•</span> avoine 60 g <span class="sep">•</span> whey 30 g.</p><p class="line">Mélanger ; frigo 4 h (ou nuit) ; déguster.</p></div></div>
       </article>
     </div>
   </section>
 
-  <!-- J3 -->
+  <!-- Jour 3 -->
   <section class="day" data-day="3" hidden>
     <div class="grid">
       <article class="card">
@@ -272,7 +273,7 @@ svg{display:block}
     </div>
   </section>
 
-  <!-- J4 -->
+  <!-- Jour 4 -->
   <section class="day" data-day="4" hidden>
     <div class="grid">
       <article class="card">
@@ -286,7 +287,7 @@ svg{display:block}
     </div>
   </section>
 
-  <!-- J5 -->
+  <!-- Jour 5 -->
   <section class="day" data-day="5" hidden>
     <div class="grid">
       <article class="card">
@@ -301,13 +302,13 @@ svg{display:block}
 
       <article class="card">
         <div class="section-title"><h2>Repas du jour</h2><span class="tag">Récup + glycogène</span></div>
-        <div class="rec"><div class="tile"><div class="donut" data-p="48" data-l="10" data-g="85" data-k="610"></div></div><div><h3>Poulet paprika & riz</h3><div class="kpi"><span class="pill">~610 kcal</span><span class="pill">P 48 g</span><span class="pill">L 10 g</span><span class="pill">G 85 g</span></div><p class="ingsline">Poulet 200 g <span class="sep">•</span> riz 80 g cru <span class="sep">•</span> yaourt 50 g <span class="sep">•</span> paprika/ail.</p><p class="line">Saisir poulet ; cuire riz ; sauce yaourt + paprika ; servir.</p></div></div>
+        <div class="rec"><div class="tile"><div class="donut" data-p="48" data-l="10" data-g="85" data-k="610"></div></div><div><h3>Poulet paprika & riz</h3><div class="kpi"><span class="pill">~610 kcal</span><span class="pill">P 48 g</span><span class="pill">L 10 g</span><span class="pill">G 85 g</span></div><p class="ingsline">Poulet 200 g <span class="sep">•</span> riz 80 g cru <span class="sep">•</span> yaourt 50 g <span class="sep">•</span> paprika/ail.</p><p class="line">Saisir poulet ; cuire riz ; sauce yaourt+paprika ; servir.</p></div></div>
         <div class="rec"><div class="tile"><div class="donut" data-p="50" data-l="9" data-g="90" data-k="620"></div></div><div><h3>Pâtes arrabbiata + poulet</h3><div class="kpi"><span class="pill">~620 kcal</span><span class="pill">P 50 g</span><span class="pill">L 9 g</span><span class="pill">G 90 g</span></div><p class="ingsline">Pâtes 80 g cru <span class="sep">•</span> sauce tomate 200 g <span class="sep">•</span> poulet 150 g.</p><p class="line">Cuire pâtes ; saisir poulet ; napper de sauce ; mélanger.</p></div></div>
       </article>
     </div>
   </section>
 
-  <!-- J6 -->
+  <!-- Jour 6 -->
   <section class="day" data-day="6" hidden>
     <div class="grid">
       <article class="card">
@@ -321,12 +322,12 @@ svg{display:block}
     </div>
   </section>
 
-  <!-- J7 -->
+  <!-- Jour 7 -->
   <section class="day" data-day="7" hidden>
     <div class="grid">
       <article class="card">
         <h2>Jour 7 — Repos / marche</h2>
-        <p class="line">10 000 pas si possible. Préparer la semaine (poulet, dinde, œufs, yaourt 0%, riz, légumes, tortillas, haricots…)</p>
+        <p class="line">10 000 pas si possible. Préparer la semaine (poulet, dinde, œufs, yaourt 0%, riz, légumes, tortillas, haricots…).</p>
       </article>
       <article class="card">
         <h2>Rappels</h2>
@@ -386,12 +387,12 @@ svg{display:block}
       <button class="btn" id="closeSupp">Fermer</button>
     </div>
     <div class="mod-grid">
-      <div class="card"><h3>Whey</h3><ul class="note"><li>25–35 g/prise pour atteindre 170–190 g protéines/j.</li></ul></div>
-      <div class="card"><h3>Créatine monohydrate</h3><ul class="note"><li>3–5 g/j, n’importe quand ; hydrate-toi bien.</li></ul></div>
+      <div class="card"><h3>Whey</h3><ul class="note"><li>25–35 g/prise pour viser 170–190 g prot/j.</li></ul></div>
+      <div class="card"><h3>Créatine monohydrate</h3><ul class="note"><li>3–5 g/j, n’importe quand ; hydrate-toi.</li></ul></div>
       <div class="card"><h3>Oméga-3</h3><ul class="note"><li>1–2 g EPA+DHA/j avec un repas gras.</li></ul></div>
-      <div class="card"><h3>Vitamine D3</h3><ul class="note"><li>1000–2000 UI/j (voir avis médical).</li></ul></div>
+      <div class="card"><h3>Vitamine D3</h3><ul class="note"><li>1000–2000 UI/j (suivre avis médical).</li></ul></div>
       <div class="card"><h3>Magnésium (glycinate)</h3><ul class="note"><li>200–400 mg le soir.</li></ul></div>
-      <div class="card"><h3>Collagène</h3><ul class="note"><li>10 g/j (avec source Vit C) — tendons/peau.</li></ul></div>
+      <div class="card"><h3>Collagène</h3><ul class="note"><li>10 g/j (avec source Vit C).</li></ul></div>
     </div>
   </div>
 </div>
@@ -455,6 +456,15 @@ svg{display:block}
 </div>
 
 <script>
+/* ==== Header height (fixe + padding body) ==== */
+(function fixHeaderHeight(){
+  const hdr = document.querySelector('header.sticky');
+  function setH(){ if(!hdr) return; document.documentElement.style.setProperty('--header-h', hdr.offsetHeight + 'px'); }
+  window.addEventListener('load', setH);
+  window.addEventListener('resize', setH);
+  new MutationObserver(setH).observe(hdr, {childList:true, subtree:true, attributes:true});
+})();
+
 /* ===== NAV ===== */
 const nav=document.getElementById('nav');
 const btns=[...nav.querySelectorAll('button')];
@@ -532,15 +542,15 @@ function createDonut(el){
       <circle cx="60" cy="60" r="50" stroke="#0c1330" stroke-width="16" fill="none"/>
       <g transform="rotate(-90 60 60)">
         <circle cx="60" cy="60" r="50" stroke="#60a5fa" stroke-width="16" fill="none" stroke-dasharray="${(p/100)*C} ${C}" stroke-dashoffset="0"/>
-        <circle cx="60" cy="60" r="50" stroke="${'#f472b6'}" stroke-width="16" fill="none" stroke-dasharray="${(l/100)*C} ${C}" stroke-dashoffset="-${(p/100)*C}"/>
-        <circle cx="60" cy="60" r="50" stroke="${'#fbbf24'}" stroke-width="16" fill="none" stroke-dasharray="${(g/100)*C} ${C}" stroke-dashoffset="-${((p+l)/100)*C}"/>
+        <circle cx="60" cy="60" r="50" stroke="#f472b6" stroke-width="16" fill="none" stroke-dasharray="${(l/100)*C} ${C}" stroke-dashoffset="-${(p/100)*C}"/>
+        <circle cx="60" cy="60" r="50" stroke="#fbbf24" stroke-width="16" fill="none" stroke-dasharray="${(g/100)*C} ${C}" stroke-dashoffset="-${((p+l)/100)*C}"/>
       </g>
     </svg>`;
   el.innerHTML = svg + `<div class="mid">${K}<br><span style="font-size:11px;color:#bcd0ff">kcal</span></div>`;
 }
 document.querySelectorAll('.donut').forEach(createDonut);
 
-/* ===== MODALES ===== */
+/* ===== MODALES (open/close) ===== */
 function openModal(m){ m.classList.add('open'); m.setAttribute('aria-hidden','false'); document.body.dataset.modalOpen="1"; }
 function closeModal(m){ m.classList.remove('open'); m.setAttribute('aria-hidden','true'); if(!document.querySelector('.modal.open')) delete document.body.dataset.modalOpen; }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ document.querySelectorAll('.modal.open').forEach(closeModal) }});
@@ -596,7 +606,7 @@ function renderBadges(){
   ].join('');
 }
 
-/* Check-in (20–22 h) */
+/* Check-in */
 const d=document;
 const ci_date=d.getElementById('ci_date');
 const ci_weight=d.getElementById('ci_weight');
@@ -695,11 +705,12 @@ document.getElementById('btnFocus').addEventListener('click',()=>{ FCTX=buildFoc
 document.getElementById('closeFocus').addEventListener('click',()=>closeModal(modalFocus));
 modalFocus.addEventListener('click',e=>{ if(e.target===modalFocus) closeModal(modalFocus) });
 
-/* Courses + prix (avec total) */
+/* ===== COURSES + PRIX ===== */
 const modalGroceries=document.getElementById('modalGroceries');
 document.getElementById('btnGroceries').addEventListener('click',()=>{ renderGroceries(); openModal(modalGroceries); });
 document.getElementById('closeGroceries').addEventListener('click',()=>closeModal(modalGroceries));
 modalGroceries.addEventListener('click',e=>{ if(e.target===modalGroceries) closeModal(modalGroceries) });
+
 const gListEl=document.getElementById('gList');
 const gTravel=document.getElementById('gTravel');
 const gKey='groceries_v1'; const gStateKey='groceries_state_v1'; const gPriceKey='groceries_prices_v1';
@@ -764,10 +775,10 @@ function baseGroceries(){
     }]:[])
   ];
 }
-function loadGState(){ try{return JSON.parse(localStorage.getItem(gStateKey)||'{}')}catch{return{}} }
-function saveGState(s){ localStorage.setItem(gStateKey, JSON.stringify(s)) }
-function loadPrices(){ try{return JSON.parse(localStorage.getItem(gPriceKey)||'{}')}catch{return{}} }
-function savePrices(p){ localStorage.setItem(gPriceKey, JSON.stringify(p)) }
+function loadGState(){ try{return JSON.parse(localStorage.getItem('groceries_state_v1')||'{}')}catch{return{}} }
+function saveGState(s){ localStorage.setItem('groceries_state_v1', JSON.stringify(s)) }
+function loadPrices(){ try{return JSON.parse(localStorage.getItem('groceries_prices_v1')||'{}')}catch{return{}} }
+function savePrices(p){ localStorage.setItem('groceries_prices_v1', JSON.stringify(p)) }
 
 function renderGroceries(){
   const state=loadGState(); gTravel.checked=!!state.travel;
@@ -815,25 +826,10 @@ if ('serviceWorker' in navigator) {
 }
 
 /* INIT */
-(function(){ // donut macros
+(function(){
   document.querySelectorAll('.donut').forEach(createDonut);
-  // check-in window label
-  const ciw=document.getElementById('ci_window'); if(ciw){ const upd=()=>{ ciw.textContent=(new Date().getHours()>=20 && new Date().getHours()<22)?'Fenêtre OUVERTE (20–22 h)':'Fenêtre fermée (remplis si besoin)'; }; upd(); setInterval(upd,60*1000); }
-})();
-// Calage body sous l’en-tête (responsive, iPhone inclus)
-(function fixHeaderHeight(){
-  const hdr = document.querySelector('header.sticky');
-  function setH(){ 
-    if (!hdr) return;
-    // offsetHeight inclut le padding top (safe-area)
-    document.documentElement.style.setProperty('--header-h', hdr.offsetHeight + 'px');
-  }
-  window.addEventListener('load', setH);
-  window.addEventListener('resize', setH);
-  // recalcul après ouverture/fermeture d’éléments qui peuvent changer la hauteur
-  new MutationObserver(setH).observe(hdr, {childList:true, subtree:true, attributes:true});
+  const ciw=document.getElementById('ci_window'); if(ciw){ const upd=()=>{ const h=(new Date()).getHours(); ciw.textContent=(h>=20 && h<22)?'Fenêtre OUVERTE (20–22 h)':'Fenêtre fermée (remplis si besoin)'; }; upd(); setInterval(upd,60*1000); }
 })();
 </script>
 </body>
 </html>
-
