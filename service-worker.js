@@ -6,7 +6,6 @@ const ASSETS = [
   '',
   'index.html',
   'manifest.webmanifest',
-  // Ajoute tes icônes si elles existent :
   // 'assets/icons/icon-192.png',
   // 'assets/icons/icon-512.png'
 ].map(p => new URL(p, BASE).toString());
