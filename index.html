@@ -1,596 +1,842 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="manifest" href="manifest.webmanifest" />
-<meta name="theme-color" content="#0f172a"/>
-<title>Santé • Changement — v1.2+</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Programme Hebdo v1.6.6 — En-tête statique</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0e1224">
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
 <style>
-  :root{
-    --bg:#0b1220; --card:#11182a; --muted:#93a4bc; --ink:#e7eefc; --accent:#66d9a3;
-    --danger:#ff6b6b; --gold:#ffd166; --brand:#4f46e5;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;background:linear-gradient(180deg,#0b1220,#0d1528);color:var(--ink);font:500 16px/1.5 Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial}
-  a{color:#8dd3ff;text-decoration:none} a:hover{text-decoration:underline}
-  .wrap{max-width:1100px;margin:0 auto;padding:84px 16px 80px}
-  /* Header sticky simple & fiable */
-  header.appbar{
-    position:sticky; top:0; z-index:1000; backdrop-filter:blur(10px);
-    background:rgba(9,14,28,.75); border-bottom:1px solid rgba(255,255,255,.06)
-  }
-  .appbar .row{display:flex; gap:10px; align-items:center; padding:10px 12px}
-  .brand{font-weight:800; letter-spacing:.3px}
-  .tabs{display:flex; gap:8px; flex-wrap:wrap}
-  .tab{
-    padding:8px 10px;border:1px solid rgba(255,255,255,.08);border-radius:10px;cursor:pointer;
-    background:rgba(255,255,255,.04); color:#cfe3ff; font-weight:600; font-size:13px
-  }
-  .tab.active{background:linear-gradient(180deg,#1a2440,#141d34); border-color:rgba(255,255,255,.14); color:#fff}
-  .pill{padding:2px 8px;border-radius:999px;background:#172036;border:1px solid rgba(255,255,255,.08); font-size:12px;color:#afc6e9}
+:root{
+  --bg:#0e1224; --ink:#eef2ff; --muted:#a5b4fc; --card:#121735; --panel:#161d44; --border:#26306b;
+  --accent:#7dd3fc; --ok:#22c55e; --warn:#f59e0b; --danger:#ef4444;
+  --ring:0 0 0 2px rgba(125,211,252,.45);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:linear-gradient(180deg,#0e1224,#0a0f21 70%);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
+a{color:inherit}
 
-  /* Layout jour = exercices à gauche, recettes à droite */
-  .grid{display:grid; grid-template-columns:1.1fr .9fr; gap:16px}
-  @media (max-width:880px){ .grid{grid-template-columns:1fr} }
+/* === EN-TÊTE STATIQUE (défile avec la page) === */
+header.sticky{
+  position: static;
+  z-index: 10;
+  background:rgba(14,18,36,.85);
+  backdrop-filter:saturate(1.1) blur(8px);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  padding-top: env(safe-area-inset-top);
+}
+body{ padding-top: 0 !important; }
 
-  .card{
-    background:linear-gradient(180deg,#0e162a,#0b1220);
-    border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:16px;
-    box-shadow:0 10px 30px rgba(0,0,0,.25)
-  }
-  .card h2{margin:0 0 10px; font-size:20px}
-  .card section+section{margin-top:14px;border-top:1px dashed rgba(255,255,255,.08); padding-top:14px}
+.wrap{max-width:1100px;margin:0 auto;padding:20px}
+.headbar{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 20px}
+.brand{display:flex;gap:10px;align-items:center}
+.brand .dot{width:10px;height:10px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 6px rgba(34,197,94,.25)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{background:var(--panel);border:1px solid var(--border);color:var(--ink);padding:8px 10px;border-radius:10px;cursor:pointer}
+.btn:hover{outline:var(--ring)}
 
-  /* Exos */
-  .exo{padding:10px 0; border-bottom:1px dashed rgba(255,255,255,.06)}
-  .exo:last-child{border-bottom:none}
-  .exo h3{margin:0 0 6px; font-size:16px; display:flex; align-items:center; gap:8px}
-  .info{display:inline-block; font-weight:800; font-size:12px; line-height:1; padding:1px 6px;
-        border-radius:999px; background:#10213a; border:1px solid rgba(255,255,255,.12); color:#a8d1ff}
-  .meta{display:flex; gap:8px; flex-wrap:wrap; color:var(--muted); font-size:12px}
-  .meta .chip{padding:3px 8px; border:1px solid rgba(255,255,255,.09); border-radius:999px}
-  .series{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
-  .bubble{
-    width:38px; height:38px; border-radius:11px; display:grid; place-items:center; cursor:pointer;
-    border:1px solid rgba(255,255,255,.12); background:#0d162b; color:#8fb7ff; font-weight:700
-  }
-  .bubble.done{background:linear-gradient(180deg,#1e2c50,#18233e); border-color:#3c6df0; color:#fff; box-shadow:inset 0 0 0 2px rgba(100,149,237,.25)}
-  .rest{font-size:12px; color:#9ab3d6; margin-left:2px}
+/* Onglets jours */
+.days{display:grid;grid-template-columns:repeat(9,1fr);gap:8px;padding:8px 20px 14px}
+.days button{border:1px solid var(--border);background:var(--card);color:var(--ink);padding:8px;border-radius:10px;cursor:pointer;font-weight:700}
+.days button.active{background:linear-gradient(180deg,#1a2146,#121838);outline:var(--ring)}
 
-  /* Recettes */
-  .recipe h3{margin:0 0 8px; font-size:16px}
-  .macros{display:flex; gap:8px; flex-wrap:wrap}
-  .macro{padding:4px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.08); color:#d7e7ff; font-size:12px}
-  .note{margin-top:8px; color:#cfe3ff; font-size:14px}
-  .note .dot{opacity:.5; margin:0 .5ch}
-  .ings{margin-top:8px; color:#bcd1ec; font-size:13px}
-  .ings .tag{display:inline-block; margin:3px 6px 0 0; padding:4px 8px; border-radius:999px; background:#172036; border:1px solid rgba(255,255,255,.07)}
+/* Colonnes */
+.grid{display:grid;grid-template-columns:1.1fr 1fr;gap:16px}
+@media(max-width:950px){.grid{grid-template-columns:1fr}}
 
-  /* Courses */
-  .list{display:grid; gap:8px}
-  .row{display:flex; align-items:center; gap:10px; justify-content:space-between}
-  .row label{display:flex; align-items:center; gap:10px}
-  .price{font-size:13px; color:#cfe3ff}
-  .muted{color:var(--muted)}
-  .tot{margin-top:10px; font-weight:800}
-  .edit{margin-left:6px; padding:3px 8px; border-radius:8px; border:1px solid rgba(255,255,255,.12); background:#13203a; color:#cde0ff; font-size:12px}
-  input[type="number"].mini{width:80px; background:#0f1a30; color:#e9f2ff; border:1px solid rgba(255,255,255,.12); padding:4px 6px; border-radius:8px}
+/* Cartes */
+.card{background:linear-gradient(180deg,#141a3a,#111633);border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.28)}
+.card h2{margin:0 0 10px;font-size:20px}
+.tag{display:inline-flex;gap:6px;align-items:center;padding:4px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);color:var(--muted);font-size:12px}
+.note{color:#cdd6ff;font-size:13px}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 
-  /* Footer XP */
-  footer.bar{
-    position:fixed; bottom:0; left:0; right:0; z-index:1000; background:rgba(9,14,28,.85);
-    border-top:1px solid rgba(255,255,255,.08); display:flex; gap:12px; align-items:center; padding:8px 12px
-  }
-  .xpbar{flex:1; height:12px; background:#0f1a2e; border:1px solid rgba(255,255,255,.08); border-radius:999px; overflow:hidden}
-  .xpbar>i{display:block; height:100%; width:0%; background:linear-gradient(90deg,#3f8cff,#66d9a3)}
-  .bt{padding:8px 10px; border-radius:10px; border:1px solid rgba(255,255,255,.12); background:#13203a; color:#d7e9ff; cursor:pointer; font-weight:700; font-size:13px}
+/* Exos */
+.exo{display:grid;grid-template-columns:1fr auto;gap:8px;padding:12px 0;border-top:1px dashed rgba(255,255,255,.08)}
+.exo:first-child{border-top:none}
+.exo h3{margin:0;font-size:16px;display:flex;align-items:center;gap:8px}
+.info-badge{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;font-weight:900;font-size:11px;background:#0e1430;border:1px solid rgba(255,255,255,.18);color:#a6d6ff;line-height:1;text-decoration:none}
+.info-badge:hover{outline:var(--ring)}
+.meta{color:#b9c1ff;font-size:13px;display:flex;gap:8px;flex-wrap:wrap}
+.meta .chip{padding:2px 8px;border:1px solid rgba(255,255,255,.14);border-radius:999px}
+.sets{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-self:end}
+.chk{display:flex;align-items:center;gap:6px;background:#0e1430;border:1px solid var(--border);border-radius:999px;padding:4px 8px}
+.chk input{accent-color:var(--ok);transform:scale(1.1)}
+.exo details{grid-column:1/-1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:8px;border-radius:10px;margin-top:6px;line-height:1.4}
 
-  /* Helpers */
-  .hide{display:none}
-  .ok{color:#8effc1}
-  .warn{color:#ffd166}
+/* Recettes */
+.rec{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:12px 0;border-top:1px dashed rgba(255,255,255,.08)}
+.rec:first-child{border-top:none}
+.tile{width:110px;height:110px;border-radius:14px;border:1px solid var(--border);background:radial-gradient(95px 75px at 60% 20%,rgba(125,211,252,.25),transparent 60%),linear-gradient(180deg,#151b3f,#0f1533)}
+.kpi{display:flex;gap:8px;flex-wrap:wrap}
+.pill{background:rgba(125,211,252,.12);border:1px solid rgba(125,211,252,.25);color:#c0ecff;padding:6px 10px;border-radius:999px;font-size:12px}
+.line{margin-top:6px;color:#dbe6ff;font-size:14px} /* <- recette "en long" */
+.ings{margin-top:6px;color:#bcd1ff;font-size:12px}
+.ings .t{display:inline-block;margin:3px 6px 0 0;padding:4px 8px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:#0f1434}
+hr.sep{border:none;border-top:1px dashed rgba(255,255,255,.1);margin:10px 0}
+
+/* Donuts macros */
+.donut{position:relative;width:110px;height:110px}
+svg{display:block}
+.donut .mid{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#dfe6ff}
+.swatch{display:flex;gap:6px;align-items:center}
+.swatch::before{content:"";width:10px;height:10px;border-radius:2px;display:inline-block}
+.swatch.p::before{background:#60a5fa}.swatch.l::before{background:#f472b6}.swatch.g::before{background:#fbbf24}
+
+/* Modales */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:18px;z-index:9999}
+.modal.open{display:flex}
+.modal .box{max-width:900px;background:linear-gradient(180deg,#141a3a,#111633);border:1px solid var(--border);border-radius:16px;padding:16px;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.45);position:relative}
+.mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:880px){.mod-grid{grid-template-columns:1fr}}
+
+/* Courses + prix */
+.gbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.switch{display:flex;align-items:center;gap:6px}
+.glist{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:880px){.glist{grid-template-columns:1fr}}
+.gcat{border:1px solid var(--border);border-radius:12px;padding:12px;background:rgba(255,255,255,.03)}
+.gcat h3{margin:0 0 8px}
+.item{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:6px 0;border-top:1px dashed rgba(255,255,255,.1)}
+.item:first-child{border-top:none}
+.item input{transform:scale(1.1);accent-color:var(--ok)}
+.item .qty{font-size:12px;color:#b9c1ff}
+.price{font-size:12px;color:#d7e7ff}
+.price .edit{width:80px;background:#0e1430;border:1px solid var(--border);border-radius:8px;color:#fff;padding:4px 6px}
+
+/* Check-in, etc. (inchangé) */
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:900px){.form{grid-template-columns:1fr}}
+.form label{display:block;font-weight:600;margin-bottom:4px}
+.form input[type=number], .form input[type=date], .form textarea{
+  width:100%;background:#0e1430;border:1px solid var(--border);border-radius:10px;color:var(--ink);padding:8px 10px
+}
+.range{accent-color:var(--accent);width:100%}
+.table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px;display:block;overflow-x:auto}
+.table th,.table td{border:1px solid rgba(255,255,255,.08);padding:6px 8px;white-space:nowrap}
+.table th{background:rgba(255,255,255,.06);text-align:left}
+.warnbox{border-left:4px solid var(--warn);padding:8px;background:rgba(245,158,11,.08);border-radius:8px}
+.tip{font-size:13px;color:#cbd5ff}
+
+/* HUD / XP / Streak (inchangé) */
+.hud{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.level{font-weight:700}
+.xpbar{position:relative;width:220px;height:10px;border-radius:999px;background:#0e1430;border:1px solid var(--border);overflow:hidden}
+.xpbar>span{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#60a5fa,#22c55e);width:0%}
+.streak{display:inline-flex;gap:6px;align-items:center;padding:4px 10px;border:1px solid rgba(255,255,255,.12);border-radius:999px;color:#ffd29a}
+
+/* iPhone */
+@supports(padding: env(safe-area-inset-top)) {
+  header.sticky { padding-top: env(safe-area-inset-top); }
+  footer       { padding-bottom: env(safe-area-inset-bottom); }
+}
+@media (max-width: 900px){
+  .days{display:flex !important;gap:8px;overflow-x:auto;padding:8px 12px 14px}
+  .days::-webkit-scrollbar{display:none}
+  .days button{flex:0 0 auto;min-width:68px;padding:10px 12px}
+}
 </style>
 </head>
 <body>
-<header class="appbar" role="navigation" aria-label="Navigation principale">
-  <div class="row">
-    <div class="brand">Santé • Changement</div>
-    <div class="pill" id="dayTag">Jour 1</div>
-    <div class="tabs" id="tabs">
-      <button class="tab active" data-go="jour">Jours</button>
-      <button class="tab" data-go="focus">Focus séance</button>
-      <button class="tab" data-go="courses">Courses</button>
-      <button class="tab" data-go="timer">Minuteur repos</button>
-      <button class="tab" data-go="checkin">Check-in (20–22h)</button>
-      <button class="tab" data-go="badges">Badges</button>
-      <button class="tab" data-go="supps">Suppléments</button>
-      <button class="tab" data-go="export">Export</button>
+<header class="sticky">
+  <div class="headbar">
+    <div class="brand"><span class="dot"></span><strong>Transformation — Semaine type (utilisable)</strong></div>
+    <div class="actions">
+      <div class="hud">
+        <span class="level">Niv. <span id="level">1</span></span>
+        <div class="xpbar" aria-label="XP vers niveau suivant"><span id="xpfill"></span></div>
+        <span class="streak">🔥 Streak : <span id="streak">0</span> j</span>
+      </div>
+      <button class="btn" id="btnFocus">Focus séance</button>
+      <button class="btn" id="btnGroceries">Courses</button>
+      <button class="btn" id="btnTimer">Minuteur repos</button>
+      <button class="btn" id="btnBadges">Badges</button>
+      <button class="btn" id="btnSupp">Compléments</button>
+      <button class="btn" id="btnReset">Réinitialiser les séries (jour affiché)</button>
     </div>
   </div>
+  <nav class="days" id="nav">
+    <button data-day="1" class="active">Lun</button>
+    <button data-day="2">Mar</button>
+    <button data-day="3">Mer</button>
+    <button data-day="4">Jeu</button>
+    <button data-day="5">Ven</button>
+    <button data-day="6">Sam</button>
+    <button data-day="7">Dim</button>
+    <button data-day="checkin">Check-in</button>
+    <button data-day="infos">Infos</button>
+  </nav>
 </header>
 
-<div class="wrap">
-  <!-- Vues -->
-  <div id="view-jour">
-    <div class="card" style="margin-bottom:12px">
-      <strong>Choisis un jour :</strong>
-      <div class="tabs" id="dayTabs" style="margin-top:8px">
-        <button class="tab active" data-day="1">J1</button>
-        <button class="tab" data-day="2">J2</button>
-        <button class="tab" data-day="3">J3</button>
-        <button class="tab" data-day="4">J4</button>
-        <button class="tab" data-day="5">J5</button>
-        <button class="tab" data-day="6">J6</button>
-        <button class="tab" data-day="7">J7</button>
-      </div>
-    </div>
-
+<main class="wrap">
+  <!-- Jour 1 -->
+  <section class="day" data-day="1">
     <div class="grid">
-      <div class="card" id="exoCol">
-        <h2>Séance</h2>
-        <div id="exos"></div>
-      </div>
+      <article class="card">
+        <div class="section-title"><h2>Jour 1 — Full-Body A (45–60’)</h2><span class="tag">Force de base + technique</span></div>
 
-      <div class="card" id="recCol">
-        <h2>Recette du jour</h2>
-        <div id="recipe"></div>
-      </div>
-    </div>
-  </div>
-
-  <div id="view-focus" class="hide">
-    <div class="card">
-      <h2>Mode Focus</h2>
-      <p class="muted">Appuie sur chaque série au fur et à mesure. Le minuteur démarre tout seul.</p>
-      <div id="focusExos"></div>
-    </div>
-  </div>
-
-  <div id="view-courses" class="hide">
-    <div class="card">
-      <h2>Liste de courses <span class="muted">(estimations modifiables)</span></h2>
-      <div class="list" id="glist"></div>
-      <div class="row">
-        <div>
-          <button class="edit" id="toggleEdit">Éditer les prix</button>
-          <button class="edit" id="loadFR">Charger estimations FR (2025)</button>
+        <div class="exo">
+          <div>
+            <h3>Goblet Squat <a class="info-badge" href="https://www.youtube.com/results?search_query=goblet+squat" target="_blank" rel="noopener">ⓘ</a></h3>
+            <p class="meta"><span class="chip">4×8–12</span><span class="chip">RPE 7–8</span><span class="chip">Tempo 3–1–2</span><span class="chip">Repos 90s</span></p>
+            <details><summary>Comment faire</summary>
+              <ul class="note"><li>Pieds largeur épaules, haltère collé au torse.</li><li>Descends 3s (cuisses //), stop 1s, remonte 2s.</li><li>Genoux dans l’axe, talons au sol, abdos gainés.</li></ul>
+            </details>
+          </div>
+          <div class="sets" data-sets="4" data-key="d1-goblet"></div>
         </div>
-        <div class="tot" id="gtotal">Total ≈ 0,00 €</div>
+
+        <div class="exo"><div><h3>Développé couché haltères <a class="info-badge" href="https://www.youtube.com/results?search_query=dumbbell+bench+press" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">4×8–12</span><span class="chip">Tempo 2–1–2</span><span class="chip">Repos 90s</span></p></div><div class="sets" data-sets="4" data-key="d1-bench"></div></div>
+        <div class="exo"><div><h3>Tractions assistées / négatives <a class="info-badge" href="https://www.youtube.com/results?search_query=negative+pull+ups" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">5×3–5</span><span class="chip">Tempo 0–1–5</span><span class="chip">Repos 90s</span></p></div><div class="sets" data-sets="5" data-key="d1-pullups"></div></div>
+        <div class="exo"><div><h3>RDL — haltères <a class="info-badge" href="https://www.youtube.com/results?search_query=dumbbell+romanian+deadlift" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">3×10–12</span><span class="chip">Tempo 3–1–2</span><span class="chip">Repos 90s</span></p></div><div class="sets" data-sets="3" data-key="d1-rdl"></div></div>
+        <div class="exo"><div><h3>Row unilatéral banc <a class="info-badge" href="https://www.youtube.com/results?search_query=one+arm+dumbbell+row" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">3×12/bras</span><span class="chip">Tempo 2–1–2</span><span class="chip">Repos 75s</span></p></div><div class="sets" data-sets="3" data-key="d1-row"></div></div>
+        <div class="exo"><div><h3>Dead Bug <a class="info-badge" href="https://www.youtube.com/results?search_query=dead+bug+exercise" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">3×8/côté</span><span class="chip">Contrôle</span><span class="chip">Repos 45s</span></p></div><div class="sets" data-sets="3" data-key="d1-deadbug"></div></div>
+      </article>
+
+      <article class="card">
+        <div class="section-title"><h2>Repas du jour (2 au choix)</h2><span class="tag">Cible : ~170–190 g prots/j</span></div>
+
+        <div class="rec">
+          <div class="tile"><div class="donut" data-p="55" data-l="12" data-g="35" data-k="510"></div></div>
+          <div>
+            <h3>Salade poulet croquante (≈15’)</h3>
+            <div class="kpi"><span class="pill">~510 kcal</span><span class="pill">P 55 g</span><span class="pill">L 12 g</span><span class="pill">G 35 g</span></div>
+            <div class="ings"><span class="t">Poulet 180 g</span><span class="t">salade</span><span class="t">tomate</span><span class="t">concombre</span><span class="t">maïs 60 g</span><span class="t">yaourt 0% 150 g</span><span class="t">citron</span><span class="t">herbes</span></div>
+            <p class="line">Saisir le poulet 6–8’; mélanger légumes + yaourt + citron + herbes; ajouter le poulet, mélanger, servir frais.</p>
+          </div>
+        </div>
+
+        <div class="rec">
+          <div class="tile"><div class="donut" data-p="45" data-l="16" data-g="60" data-k="600"></div></div>
+          <div>
+            <h3>Chili express (batch 2 portions)</h3>
+            <div class="kpi"><span class="pill">~600 kcal/portion</span><span class="pill">P 45 g</span><span class="pill">L 16 g</span><span class="pill">G 60 g</span></div>
+            <div class="ings"><span class="t">Bœuf 5% 300 g</span><span class="t">haricots rouges 240 g</span><span class="t">tomate 400 g</span><span class="t">oignon</span><span class="t">épices</span></div>
+            <p class="line">Suer oignon+épices 2–3’; saisir le bœuf 4–5’; ajouter tomate+haricots, mijoter 15–20’ jusqu’à épaississement.</p>
+          </div>
+        </div>
+
+        <p class="note">Règle : 30–45 g de protéines/repas • légumes à volonté • eau 3–4 L.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Jour 2 -->
+  <section class="day" data-day="2" hidden>
+    <div class="grid">
+      <article class="card">
+        <div class="section-title"><h2>Jour 2 — Cardio Z2 + McGill (30–45’)</h2><span class="tag">Endurance + dos friendly</span></div>
+        <div class="exo"><div><h3>Pratique Tractions (bandes) <a class="info-badge" href="https://www.youtube.com/results?search_query=band+assisted+pull+ups" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">EMOM 10’</span><span class="chip">3–5 reps</span></p></div><div class="sets" data-sets="10" data-key="d2-pullupemom"></div></div>
+        <div class="exo"><div><h3>Footing Z2 <a class="info-badge" href="https://www.youtube.com/results?search_query=zone+2+training" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">25–35’</span><span class="chip">aisance respiratoire</span></p></div><div class="sets" data-sets="1" data-key="d2-z2"></div></div>
+        <div class="exo"><div><h3>McGill Big 3 <a class="info-badge" href="https://www.youtube.com/results?search_query=McGill+Big+3" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">Curl-up 3×10</span><span class="chip">Bird-dog 3×8/côté</span><span class="chip">Gainage lat. 3×30–45’’</span></p></div><div class="sets" data-sets="9" data-key="d2-mcgill"></div></div>
+      </article>
+      <article class="card">
+        <div class="section-title"><h2>Repas du jour</h2><span class="tag">Satiété & récup</span></div>
+        <div class="rec"><div class="tile"><div class="donut" data-p="45" data-l="12" data-g="45" data-k="480"></div></div><div><h3>Wrap dinde-fromage blanc</h3><div class="kpi"><span class="pill">~480 kcal</span><span class="pill">P 45 g</span><span class="pill">L 12 g</span><span class="pill">G 45 g</span></div><div class="ings"><span class="t">Tortilla complète</span><span class="t">dinde 120 g</span><span class="t">fromage blanc 0% 100 g</span><span class="t">salade</span><span class="t">tomate</span></div><p class="line">Tartiner, garnir, rouler serré, toaster 1–2’/face pour souder.</p></div></div>
+        <div class="rec"><div class="tile"><div class="donut" data-p="38" data-l="9" data-g="55" data-k="430"></div></div><div><h3>Overnight Oats protéiné</h3><div class="kpi"><span class="pill">~430 kcal</span><span class="pill">P 38 g</span><span class="pill">L 9 g</span><span class="pill">G 55 g</span></div><div class="ings"><span class="t">Lait 200 ml</span><span class="t">yaourt 100 g</span><span class="t">avoine 60 g</span><span class="t">whey 30 g</span></div><p class="line">Mélanger tout dans un bocal; repos frigo 4 h (ou nuit); manger frais.</p></div></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Jour 3 -->
+  <section class="day" data-day="3" hidden>
+    <div class="grid">
+      <article class="card">
+        <div class="section-title"><h2>Jour 3 — Full-Body B (50–60’)</h2><span class="tag">Hanches + dos + épaules</span></div>
+        <div class="exo"><div><h3>Fentes bulgares <a class="info-badge" href="https://www.youtube.com/results?search_query=bulgarian+split+squat" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">3–4×8–10/jambe</span><span class="chip">Tempo 3–1–2</span></p></div><div class="sets" data-sets="4" data-key="d3-bulgarian"></div></div>
+        <div class="exo"><div><h3>Développé épaules assis <a class="info-badge" href="https://www.youtube.com/results?search_query=dumbbell+shoulder+press+seated" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">3–4×8–12</span></p></div><div class="sets" data-sets="4" data-key="d3-shoulderpress"></div></div>
+        <div class="exo"><div><h3>Hip Thrust <a class="info-badge" href="https://www.youtube.com/results?search_query=dumbbell+hip+thrust" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">4×10–12</span></p></div><div class="sets" data-sets="4" data-key="d3-hipthrust"></div></div>
+        <div class="exo"><div><h3>Tirage vertical <a class="info-badge" href="https://www.youtube.com/results?search_query=lat+pulldown+form" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">3×10–12</span><span class="chip">pause 1s poitrine</span></p></div><div class="sets" data-sets="3" data-key="d3-latpulldown"></div></div>
+        <div class="exo"><div><h3>Face Pull (élastique) <a class="info-badge" href="https://www.youtube.com/results?search_query=band+face+pull" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">3×15</span></p></div><div class="sets" data-sets="3" data-key="d3-facepull"></div></div>
+        <div class="exo"><div><h3>Pallof Press <a class="info-badge" href="https://www.youtube.com/results?search_query=band+pallof+press" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">3×12/côté</span></p></div><div class="sets" data-sets="6" data-key="d3-pallof"></div></div>
+      </article>
+
+      <article class="card">
+        <div class="section-title"><h2>Repas du jour</h2><span class="tag">+ fibres & protéines</span></div>
+        <div class="rec"><div class="tile"><div class="donut" data-p="46" data-l="12" data-g="52" data-k="520"></div></div><div><h3>Wrap protéiné 2.0</h3><div class="kpi"><span class="pill">~520 kcal</span><span class="pill">P 46 g</span><span class="pill">L 12 g</span><span class="pill">G 52 g</span></div><div class="ings"><span class="t">Tortilla complète</span><span class="t">poulet 140 g</span><span class="t">yaourt 0% 80 g</span><span class="t">crudités</span><span class="t">avocat 50 g</span></div><p class="line">Griller le poulet; garnir tortilla avec yaourt+crudités+avocat; rouler; toaster 1–2’/face.</p></div></div>
+        <div class="rec"><div class="tile"><div class="donut" data-p="40" data-l="10" data-g="75" data-k="600"></div></div><div><h3>Riz + Chili</h3><div class="kpi"><span class="pill">~600 kcal</span><span class="pill">P 40 g</span><span class="pill">L 10 g</span><span class="pill">G 75 g</span></div><div class="ings"><span class="t">Chili veille</span><span class="t">riz basmati</span></div><p class="line">Réchauffer chili, cuire riz al dente; mélanger dans le bol; ajuster sel/piment.</p></div></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Jour 4 -->
+  <section class="day" data-day="4" hidden>
+    <div class="grid">
+      <article class="card">
+        <div class="section-title"><h2>Jour 4 — Repos actif (20–30’)</h2><span class="tag">Mobilité & récup</span></div>
+        <ul class="note"><li>Marche 20–30’ + 10’ mobilité (chevilles, hanches, thoracique).</li><li>Respiration 4-7-8 (3–5 cycles) le soir.</li></ul>
+      </article>
+      <article class="card">
+        <h2>Snacks intelligents</h2>
+        <ul class="note"><li>Fromage blanc 0% 200 g + miel (1 c.c.) + cannelle → ~20 g prot.</li><li>Jambon de dinde 100 g + crudités → wrap éclair.</li></ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- Jour 5 -->
+  <section class="day" data-day="5" hidden>
+    <div class="grid">
+      <article class="card">
+        <div class="section-title"><h2>Jour 5 — Haut du corps + Vitesse</h2><span class="tag">Volume haut + vitesse</span></div>
+        <div class="exo"><div><h3>Développé incliné haltères <a class="info-badge" href="https://www.youtube.com/results?search_query=dumbbell+incline+press" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">4×8–12</span></p></div><div class="sets" data-sets="4" data-key="d5-incpress"></div></div>
+        <div class="exo"><div><h3>Row (prise neutre) <a class="info-badge" href="https://www.youtube.com/results?search_query=seated+row+neutral+grip" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">4×10–12</span></p></div><div class="sets" data-sets="4" data-key="d5-row"></div></div>
+        <div class="exo"><div><h3>Dips banc / pompes <a class="info-badge" href="https://www.youtube.com/results?search_query=bench+dips" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">3×12–15</span></p></div><div class="sets" data-sets="3" data-key="d5-dips"></div></div>
+        <div class="exo"><div><h3>Curl haltères <a class="info-badge" href="https://www.youtube.com/results?search_query=dumbbell+biceps+curl" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">3×12–15</span></p></div><div class="sets" data-sets="3" data-key="d5-curl"></div></div>
+        <div class="exo"><div><h3>Gainage latéral <a class="info-badge" href="https://www.youtube.com/results?search_query=side+plank" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">3×30–45’’/côté</span></p></div><div class="sets" data-sets="6" data-key="d5-sideplank"></div></div>
+        <div class="exo"><div><h3>Intervalles course <a class="info-badge" href="https://www.youtube.com/results?search_query=interval+running+30+90" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">5×(30’’ vite / 90’’ marche)</span></p></div><div class="sets" data-sets="5" data-key="d5-ints"></div></div>
+      </article>
+
+      <article class="card">
+        <div class="section-title"><h2>Repas du jour</h2><span class="tag">Récup + glycogène</span></div>
+        <div class="rec"><div class="tile"><div class="donut" data-p="48" data-l="10" data-g="85" data-k="610"></div></div><div><h3>Poulet paprika & riz</h3><div class="kpi"><span class="pill">~610 kcal</span><span class="pill">P 48 g</span><span class="pill">L 10 g</span><span class="pill">G 85 g</span></div><div class="ings"><span class="t">Poulet 200 g</span><span class="t">riz 80 g cru</span><span class="t">yaourt 50 g</span><span class="t">paprika/ail</span></div><p class="line">Saisir poulet épicé 8–10’; cuire riz al dente; mélanger sauce yaourt+paprika, servir sur le riz.</p></div></div>
+        <div class="rec"><div class="tile"><div class="donut" data-p="50" data-l="9" data-g="90" data-k="620"></div></div><div><h3>Pâtes arrabbiata + poulet</h3><div class="kpi"><span class="pill">~620 kcal</span><span class="pill">P 50 g</span><span class="pill">L 9 g</span><span class="pill">G 90 g</span></div><div class="ings"><span class="t">Pâtes 80 g cru</span><span class="t">sauce tomate 200 g</span><span class="t">poulet 150 g</span></div><p class="line">Cuire pâtes; saisir poulet; napper sauce tomate; mélanger et ajuster piment.</p></div></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Jour 6 -->
+  <section class="day" data-day="6" hidden>
+    <div class="grid">
+      <article class="card">
+        <div class="section-title"><h2>Jour 6 — Intervalles course (35–45’)</h2><span class="tag">Objectif : 5 km &lt; 25’</span></div>
+        <div class="exo"><div><h3>Séance type <a class="info-badge" href="https://www.youtube.com/results?search_query=400m+interval+running" target="_blank" rel="noopener">ⓘ</a></h3><p class="meta"><span class="chip">Échauffement 10’</span><span class="chip">6×400 m @ ~5:00/km (r:90’’)</span><span class="chip">Retour au calme 10’</span></p></div><div class="sets" data-sets="6" data-key="d6-400m"></div></div>
+      </article>
+      <article class="card">
+        <h2>Hydratation & électrolytes</h2>
+        <p class="note">3–4 L/j. Si forte transpiration : pincée de sel + citron dans l’eau.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Jour 7 -->
+  <section class="day" data-day="7" hidden>
+    <div class="grid">
+      <article class="card">
+        <h2>Jour 7 — Repos / marche</h2>
+        <p class="note">10 000 pas si possible. Prépare la semaine (poulet, dinde, œufs, yaourt 0%, riz, légumes, tortillas complètes, haricots…).</p>
+      </article>
+      <article class="card">
+        <h2>Rappel simple</h2>
+        <ul class="note"><li>Progression : RPE ≤8 → +1–2 reps ou +2 kg séance suivante.</li><li>Sommeil 7–8 h. Lever simple : lumière, eau, 5’ de marche.</li><li>Tabac : −5 cigarettes/sem.</li></ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- CHECK-IN -->
+  <section class="day" data-day="checkin" hidden>
+    <article class="card">
+      <div class="section-title"><h2>Check-in quotidien (20–22 h)</h2><span class="tag" id="ci_window">Fenêtre : vérification…</span></div>
+      <div class="warnbox" style="margin-top:6px"><p class="tip">Remplis puis <b>Enregistrer</b>. Tu peux <b>Copier</b> le résumé ou <b>Exporter</b> CSV/JSON.</p></div>
+      <div class="form" style="margin-top:10px">
+        <div><label>Date</label><input id="ci_date" type="date"></div>
+        <div><label>Poids (kg)</label><input id="ci_weight" type="number" step="0.1" placeholder="ex. 79.8"></div>
+        <div><label>Sommeil (0–10) <span id="ci_sleep_v" class="small"></span></label><input id="ci_sleep" class="range" type="range" min="0" max="10" step="1" value="0" oninput="ci_sleep_v.textContent=this.value"></div>
+        <div><label>Énergie (0–10) <span id="ci_energy_v" class="small"></span></label><input id="ci_energy" class="range" type="range" min="0" max="10" step="1" value="0" oninput="ci_energy_v.textContent=this.value"></div>
+        <div><label>Humeur (0–10) <span id="ci_mood_v" class="small"></span></label><input id="ci_mood" class="range" type="range" min="0" max="10" step="1" value="0" oninput="ci_mood_v.textContent=this.value"></div>
+        <div><label>Pas du jour</label><input id="ci_steps" type="number" step="100" placeholder="ex. 9500"></div>
+        <div><label>Perfs gym (exos + reps/temps)</label><textarea id="ci_perf" rows="3" placeholder="ex. Goblet 4×10@6 kg | RDL 3×12..."></textarea></div>
+        <div><label>Alimentation (adhérence % + protéines g)</label><textarea id="ci_food" rows="3" placeholder="ex. 85% | 185 g prot"></textarea></div>
+        <div><label>Étapes accomplies</label><textarea id="ci_done" rows="2" placeholder="ex. séance OK, 20’ marche..."></textarea></div>
+        <div><label>Obstacles rencontrés</label><textarea id="ci_obst" rows="2" placeholder="ex. fatigue, réunion tardive..."></textarea></div>
+        <div style="grid-column:1/-1"><label>Plan pour demain</label><textarea id="ci_plan" rows="2" placeholder="ex. séance Jour 3, wrap protéiné..."></textarea></div>
       </div>
-      <p class="muted" style="margin-top:8px">Les prix sont **moyens** (France) et varient selon magasin/ville. Ajuste au besoin.</p>
-    </div>
-  </div>
-
-  <div id="view-timer" class="hide">
-    <div class="card">
-      <h2>Minuteur de repos</h2>
-      <p class="muted">Astuce : 90–120 s forces ; 60–90 s hypertrophie ; 30–60 s circuit.</p>
-      <div class="row">
-        <label>Repos (s) <input id="restInput" type="number" class="mini" value="90" min="15" step="5"></label>
-        <button class="bt" id="startTimer">Démarrer</button>
-        <div id="timerShow" class="pill">00:00</div>
+      <div class="actions" style="margin-top:8px;gap:8px">
+        <button class="btn" id="ci_save">Enregistrer</button>
+        <button class="btn" id="ci_copy">Copier le résumé</button>
+        <button class="btn" id="ci_export_csv">Exporter CSV</button>
+        <button class="btn" id="ci_export_json">Exporter JSON</button>
+        <button class="btn" id="ci_delete">Supprimer la date</button>
       </div>
-    </div>
-  </div>
+      <table class="table" id="ci_table"><thead><tr><th>Date</th><th>Sommeil</th><th>Énergie</th><th>Humeur</th><th>Poids</th><th>Pas</th><th>Perfs</th><th>Alim</th><th>Étapes</th><th>Obstacles</th><th>Plan</th></tr></thead><tbody></tbody></table>
+    </article>
+  </section>
 
-  <div id="view-checkin" class="hide">
-    <div class="card">
-      <h2>Check-in quotidien (20–22h)</h2>
-      <p class="muted">Colle ce modèle dans le champ ci-dessous et remplis :</p>
-      <p class="pill">Sommeil (0–10) | Énergie (0–10) | Humeur (0–10) | Poids (kg) | Perfs gym (exos + reps/temps) | Alimentation (adhérence % + protéines g) | Pas du jour | Étapes accomplies | Obstacles rencontrés | Plan pour demain.</p>
-      <textarea id="ck" rows="6" style="width:100%;background:#0f1a30;color:#e9f2ff;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px"></textarea>
-      <div class="row" style="margin-top:8px">
-        <button class="bt" id="saveCK">Enregistrer</button>
-        <div class="muted" id="ckInfo">—</div>
-      </div>
-    </div>
-  </div>
-
-  <div id="view-badges" class="hide">
-    <div class="card">
-      <h2>Badges</h2>
-      <div id="badges"></div>
-      <p class="muted">Les badges se débloquent en validant des séries/séances. Si tu **décoches**, l’XP revient en arrière.</p>
-    </div>
-  </div>
-
-  <div id="view-supps" class="hide">
-    <div class="card">
-      <h2>Suppléments (optionnels)</h2>
-      <ul>
-        <li><strong>Whey</strong> : 20–30 g après séance ou pour atteindre ta cible protéines.</li>
-        <li><strong>Créatine monohydrate</strong> : 3–5 g/j, n’importe quand (hydratation ok).</li>
-        <li><strong>Oméga-3</strong> : selon étiquette (si peu de poissons gras).</li>
-        <li><strong>Collagène</strong> : 10 g/j, idéalement avec source Vit C (peau/tendons). <!-- remplace la caféine --></li>
-        <li><strong>Vit D</strong> (hiver/faible exposition) : selon avis médical / étiquette.</li>
+  <!-- INFOS -->
+  <section class="day" data-day="infos" hidden>
+    <article class="card">
+      <div class="section-title"><h2>Infos & Motivation</h2><span class="tag">Cap : Été 2026 — Esthétique + Performance</span></div>
+      <ul class="note">
+        <li><b>Pourquoi :</b> changer tes habitudes, te plaire physiquement, stopper la procrastination.</li>
+        <li><b>Règles :</b> RPE 7–9 • Tempo contrôlé • 30–45 g prot/repas • 10k pas si possible • 7–8 h de sommeil.</li>
+        <li><b>Auto-validation :</b> séries cochées = XP ; action quotidienne = streak ; badges = étapes franchies.</li>
       </ul>
-      <p class="muted">Toujours vérifier tolérance personnelle et contre-indications.</p>
-    </div>
-  </div>
+    </article>
+  </section>
+</main>
 
-  <div id="view-export" class="hide">
-    <div class="card">
-      <h2>Export rapide</h2>
-      <p class="muted">Sauvegarde un fichier .json (check-ins, progression des séries, courses, XP).</p>
-      <button class="bt" id="doExport">Exporter</button>
-      <span id="expInfo" class="muted"></span>
+<footer class="wrap">
+  <p>Design d’origine conservé. “ⓘ” → recherche YouTube. Courses : prix estimatifs éditables + total. XP corrigée (−5 si décoché).</p>
+</footer>
+
+<!-- MODALES (Focus, Minuteur, Badges, Supps, Courses) — identiques au design d’origine, avec prix -->
+<div class="modal" id="modalSupp" aria-hidden="true">
+  <div class="box">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px">
+      <h2 style="margin:0">Compléments — guide express</h2>
+      <button class="btn" id="closeSupp">Fermer</button>
+    </div>
+    <div class="mod-grid">
+      <div class="card"><h3>Whey</h3><ul class="note"><li>25–35 g/prise pour atteindre 170–190 g protéines/j.</li></ul></div>
+      <div class="card"><h3>Créatine (monohydrate)</h3><ul class="note"><li>3–5 g/j, n’importe quand (hydratation).</li></ul></div>
+      <div class="card"><h3>Oméga-3</h3><ul class="note"><li>1–2 g EPA+DHA/j avec un repas.</li></ul></div>
+      <div class="card"><h3>Vitamine D3</h3><ul class="note"><li>1000–2000 UI/j selon avis.</li></ul></div>
+      <div class="card"><h3>Magnésium (glycinate)</h3><ul class="note"><li>200–400 mg le soir.</li></ul></div>
+      <div class="card"><h3>Collagène</h3><ul class="note"><li>10 g/j (avec source Vit C).</li></ul></div>
     </div>
   </div>
 </div>
 
-<footer class="bar">
-  <div class="pill">XP : <span id="xpNum">0</span></div>
-  <div class="xpbar"><i id="xpf"></i></div>
-  <button class="bt" onclick="resetToday()">Réinitialiser jour</button>
-</footer>
+<div class="modal" id="modalTimer" aria-hidden="true">
+  <div class="box">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px">
+      <h2 style="margin:0">Minuteur de repos</h2>
+      <button class="btn" id="closeTimer">Fermer</button>
+    </div>
+    <div class="timer">
+      <div class="display" id="tDisplay">00:00</div>
+      <div class="preset">
+        <button class="tbtn" data-sec="30">30 s</button>
+        <button class="tbtn" data-sec="60">60 s</button>
+        <button class="tbtn" data-sec="90">90 s</button>
+      </div>
+      <button class="tbtn" id="tStart">Démarrer</button>
+      <button class="tbtn" id="tStop">Stop</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modalBadges" aria-hidden="true">
+  <div class="box">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px">
+      <h2 style="margin:0">Badges</h2>
+      <button class="btn" id="closeBadges">Fermer</button>
+    </div>
+    <div id="badgesList" class="mod-grid"></div>
+  </div>
+</div>
+
+<div class="modal" id="modalFocus" aria-hidden="true">
+  <div class="box" style="max-width:760px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px">
+      <h2 class="focusTitle">Focus — <span id="fDay">Jour ?</span></h2>
+      <button class="btn" id="closeFocus">Fermer</button>
+    </div>
+    <div id="fBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="modalGroceries" aria-hidden="true">
+  <div class="box">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px">
+      <h2 style="margin:0">Courses (semaine type)</h2>
+      <button class="btn" id="closeGroceries">Fermer</button>
+    </div>
+    <div class="gbar">
+      <div class="switch"><input type="checkbox" id="gTravel"><label for="gTravel">Mode déplacement (ajouts portables)</label></div>
+      <button class="btn" id="gAll">Tout cocher</button>
+      <button class="btn" id="gNone">Tout décocher</button>
+      <button class="btn" id="gEdit">Éditer les prix</button>
+      <button class="btn" id="gCopy">Copier</button>
+      <button class="btn" id="gExport">Export .txt</button>
+    </div>
+    <div id="gList" class="glist"></div>
+    <p class="note" id="gTotal" style="margin-top:10px"><b>Total estimé :</b> 0,00 €</p>
+  </div>
+</div>
 
 <script>
-/* ---------- Données ---------- */
-const YT = {
-  goblet:"https://www.youtube.com/watch?v=JAkdrilhI1g",
-  dbPress:"https://www.youtube.com/watch?v=VmB1G1K7v94",
-  negPullup:"https://www.youtube.com/watch?v=IQZqPqkpdFE",
-  rdl:"https://www.youtube.com/watch?v=uhghy9pFIPY",
-  row:"https://www.youtube.com/watch?v=EEFHHOCfHgw",
-  deadbug:"https://www.youtube.com/watch?v=4XLEnwUr1d8",
-  mcgill:"https://www.youtube.com/watch?v=jZylx81_kfg",
-  bulgarian:"https://www.youtube.com/watch?v=2C-uNgKwPLE",
-  ohPress:"https://www.youtube.com/watch?v=qEwKCR5JCog",
-  facepull:"https://www.youtube.com/watch?v=CSP7YpPv3ds",
-  pallof:"https://www.youtube.com/watch?v=Y0e2w0aKOXw",
-  latpd:"https://www.youtube.com/watch?v=CAwf7n6Luuc",
-  zone2:"https://www.youtube.com/watch?v=yguccI9aocY",
-  emomPU:"https://www.youtube.com/watch?v=ELRhRlj1Zaw"
-};
-
-const program = {
-  1:{
-    exos:[
-      {name:"Goblet Squat", sets:4, reps:"8–12", rest:90, info:YT.goblet, id:"goblet"},
-      {name:"Développé couché haltères", sets:4, reps:"8–12", rest:90, info:YT.dbPress, id:"dbpress"},
-      {name:"Tractions assistées / négatives", sets:6, reps:"2–5", rest:90, info:YT.negPullup, id:"pullups"},
-      {name:"RDL haltères", sets:3, reps:"10–12", rest:90, info:YT.rdl, id:"rdl"},
-      {name:"Rowing 1-bras", sets:3, reps:"10–12", rest:75, info:YT.row, id:"row"},
-      {name:"Dead bug (core)", sets:3, reps:"10/10", rest:45, info:YT.deadbug, id:"deadbug"},
-    ],
-    recipe:{
-      title:"Bowl poulet & riz (+ légumes croquants)",
-      macros:{kcal:620,p:55,g:70,l:14},
-      ings:["250 g riz cuit","150 g blanc de poulet","200 g légumes croquants","10 g huile d’olive","épices"],
-      note:"Cuire le riz al dente. Émincer le poulet, assaisonner (paprika, ail). 8–10 min à la poêle. Ajouter les légumes 3–4 min pour garder du croquant, mélanger avec le riz. Arroser d’un filet d’huile, goutter, ajuster sel/poivre. Servir chaud."
-    }
-  },
-  2:{
-    exos:[
-      {name:"Footing Z2 (aisance)", sets:1, reps:"20–35 min", rest:0, info:YT.zone2, id:"z2"},
-      {name:"McGill Big 3", sets:3, reps:"10 s/10 s/10 s", rest:30, info:YT.mcgill, id:"mcgill"},
-    ],
-    recipe:{
-      title:"Wrap dinde-skyr (+ crudités)",
-      macros:{kcal:520,p:50,g:55,l:14},
-      ings:["2 wraps blé","120 g dinde","150 g skyr 0%","salade, tomates, oignon","moutarde"],
-      note:"Tartiner le skyr et la moutarde, ajouter dinde et crudités finement coupées. Rouler serré, toaster 1–2 min par face à feu moyen pour souder et tiédir. Croquer !"
-    }
-  },
-  3:{
-    exos:[
-      {name:"Bulgarian split squat", sets:3, reps:"8–10 / jambe", rest:90, info:YT.bulgarian, id:"bss"},
-      {name:"Développé épaules assis (haltères)", sets:3, reps:"8–12", rest:90, info:YT.ohPress, id:"ohp"},
-      {name:"Face pull (élastique)", sets:3, reps:"12–15", rest:60, info:YT.facepull, id:"facepull"},
-      {name:"Pallof press (élastique)", sets:3, reps:"10–12 / côté", rest:45, info:YT.pallof, id:"pallof"},
-    ],
-    recipe:{
-      title:"Pâtes 5% bœuf sauce tomate rapide",
-      macros:{kcal:650,p:45,g:85,l:14},
-      ings:["90 g pâtes crues","200 g bœuf 5%","200 g pulpe tomate","oignon, ail, herbes","parmesan (option)"],
-      note:"Saisir l’oignon+ail 2 min, ajouter bœuf émietté (5–6 min). Verser tomate, herbes, réduire 5–8 min. Cuire les pâtes al dente et mélanger. Une pincée de parmesan si tu veux."
-    }
-  },
-  4:{
-    exos:[
-      {name:"EMOM 20’ : tractions/pompes (alternance)", sets:20, reps:"min 1: 3–5 tractions • min 2: 10–15 pompes", rest:0, info:YT.emomPU, id:"emom"},
-      {name:"Lat pulldown (station)", sets:3, reps:"8–12", rest:90, info:YT.latpd, id:"latpd"},
-      {name:"Gainage latéral", sets:3, reps:"20–40 s / côté", rest:45, info:"https://www.youtube.com/watch?v=XeN4pEZZJNI", id:"sideplank"},
-    ],
-    recipe:{
-      title:"Chili dinde express (1-pot)",
-      macros:{kcal:560,p:48,g:60,l:12},
-      ings:["250 g haricots rouges (égouttés)","180 g dinde hachée","300 g concassée tomate","maïs, oignon, épices"],
-      note:"Faire revenir oignon+épices 2 min, ajouter dinde (5 min). Verser tomate, haricots, maïs. Mijoter 10–12 min jusqu’à épaississement. Ajuster sel/cumin/piment."
-    }
-  },
-  5:{
-    exos:[
-      {name:"Hip thrust haltère", sets:4, reps:"8–12", rest:90, info:"https://www.youtube.com/watch?v=29OfN4ztW_g", id:"hipthrust"},
-      {name:"Rowing 1-bras", sets:3, reps:"10–12", rest:75, info:YT.row, id:"row2"},
-      {name:"RDL haltères", sets:3, reps:"10–12", rest:90, info:YT.rdl, id:"rdl2"},
-      {name:"Dead bug (core)", sets:3, reps:"10/10", rest:45, info:YT.deadbug, id:"deadbug2"},
-    ],
-    recipe:{
-      title:"Omelette aux blancs + pommes de terre sautées",
-      macros:{kcal:520,p:42,g:55,l:12},
-      ings:["6 blancs + 2 œufs","250 g pommes de terre","poivron/oignon","herbes","spray huile"],
-      note:"Cubes de pommes de terre 10–12 min poêle couvercle (spray huile). Battre œufs, ajouter légumes, verser, cuire à feu moyen 3–4 min, plier. Sel, poivre, herbes."
-    }
-  },
-  6:{
-    exos:[
-      {name:"Footing Z2 progressif", sets:1, reps:"25–40 min", rest:0, info:YT.zone2, id:"z2b"},
-      {name:"Mobility 10’", sets:1, reps:"hanches, chevilles, T-spine", rest:0, info:YT.mcgill, id:"mob"},
-    ],
-    recipe:{
-      title:"Yaourt skyr + muesli maison protéiné",
-      macros:{kcal:480,p:45,g:55,l:10},
-      ings:["250 g skyr 0%","40 g flocons d’avoine","20 g whey","fruits (option)","édulcorant"],
-      note:"Mélanger skyr et whey, ajouter avoine et fruits. Si tu veux plus croustillant, toaster l’avoine à sec 3–4 min avant."
-    }
-  },
-  7:{
-    exos:[
-      {name:"Repos actif / marche 8–12k pas", sets:1, reps:"au fil de la journée", rest:0, info:YT.zone2, id:"walk"},
-      {name:"Étirements légers 10’", sets:1, reps:"global", rest:0, info:YT.mcgill, id:"stretch"},
-    ],
-    recipe:{
-      title:"Salade complète (thème libre poulet/dinde/œufs)",
-      macros:{kcal:520,p:45,g:45,l:16},
-      ings:["protéine 150 g","crudités variées","200 g féculent cuit (pâtes/riz/quinoa)","huile d’olive 10 g"],
-      note:"Composer une base verte, ajouter féculent tiède, protéine, croquants (maïs, concombre). Assaisonner légère vinaigrette citron/huile 10 g."
-    }
-  }
-};
-
-function baseGroceries(){
-  return [
-    {k:"Riz (1 kg)", est:2.20},
-    {k:"Poulet (1 kg)", est:10.50},
-    {k:"Dinde hachée (500 g)", est:4.80},
-    {k:"Bœuf 5% (600 g)", est:9.20},
-    {k:"Wraps (x8)", est:2.30},
-    {k:"Skyr 0% (1 kg)", est:3.50},
-    {k:"Haricots rouges (400 g)", est:1.00},
-    {k:"Maïs (300 g)", est:1.20},
-    {k:"Pulpe/concassée tomate (400 g)", est:1.10},
-    {k:"Légumes surgelés (1 kg)", est:2.50},
-    {k:"Œufs (12)", est:3.20},
-    {k:"Pommes de terre (2 kg)", est:3.40},
-    {k:"Avoine (500 g)", est:1.30},
-    {k:"Huile d’olive (750 ml)", est:7.90},
-    {k:"Épices/Herbes", est:3.00},
-    {k:"Whey 1 kg", est:24.00},
-    {k:"Créatine 500 g", est:16.00},
-    {k:"Oméga-3 (100 caps)", est:14.00},
-    {k:"Collagène 500 g", est:20.00},
-  ];
-}
-
-/* ---------- État & stockage ---------- */
-const $ = sel => document.querySelector(sel);
-const exState = JSON.parse(localStorage.getItem("exState")||"{}");
-const ckState = JSON.parse(localStorage.getItem("ckState")||"{}");
-const xpState = JSON.parse(localStorage.getItem("xpState")||"{}");
-const groceryState = JSON.parse(localStorage.getItem("grocery")||"{}");
-if(!xpState.xp) xpState.xp=0;
-
-let day=1, editingPrices=false;
-
-/* ---------- Rendu vues ---------- */
-function fmtMacros(m){ return `
-  <div class="macros">
-    <span class="macro">≈ ${m.kcal} kcal</span>
-    <span class="macro">P ${m.p} g</span>
-    <span class="macro">G ${m.g} g</span>
-    <span class="macro">L ${m.l} g</span>
-  </div>`}
-
-function renderDay(){
-  $("#dayTag").textContent = "Jour "+day;
-  const D = program[day];
-
-  // Exercices
-  const exosHTML = D.exos.map((e,idx)=>{
-    const key = `d${day}-${e.id}`;
-    const doneSet = exState[key]||[];
-    const bubbles = Array.from({length:e.sets}).map((_,i)=>{
-      const done = doneSet.includes(i);
-      return `<button class="bubble ${done?'done':''}" data-key="${key}" data-i="${i}" title="Série ${i+1}">${i+1}</button>`;
-    }).join("");
-    return `
-      <div class="exo">
-        <h3>${e.name} <a class="info" href="${e.info}" target="_blank" rel="noopener" aria-label="Vidéo: ${e.name}">ⓘ</a></h3>
-        <div class="meta">
-          <span class="chip">${e.reps} reps/temps</span>
-          ${e.rest?`<span class="chip">Repos ${e.rest}s</span>`:""}
-        </div>
-        <div class="series">${bubbles}</div>
-        ${e.rest?`<div class="rest">→ Clique pour valider. Minuteur auto: ${e.rest}s</div>`:""}
-      </div>
-    `;
-  }).join("");
-  $("#exos").innerHTML = exosHTML;
-
-  // Recette
-  const R = D.recipe;
-  $("#recipe").innerHTML = `
-    <div class="recipe">
-      <h3>${R.title}</h3>
-      ${fmtMacros(R.macros)}
-      <div class="ings">${R.ings.map(i=>`<span class="tag">${i}</span>`).join("")}</div>
-      <p class="note">${R.note.replaceAll(". ",".<span class='dot'>•</span> ")}</p>
-    </div>
-  `;
-
-  // Focus
-  $("#focusExos").innerHTML = D.exos.map(e=>{
-    const key = `d${day}-${e.id}`;
-    const doneSet = exState[key]||[];
-    const bubbles = Array.from({length:e.sets}).map((_,i)=>{
-      const done = doneSet.includes(i);
-      return `<button class="bubble ${done?'done':''}" data-key="${key}" data-i="${i}" title="Série ${i+1}">${i+1}</button>`;
-    }).join("");
-    return `
-      <section class="exo">
-        <h3>${e.name} <a class="info" href="${e.info}" target="_blank" rel="noopener">ⓘ</a></h3>
-        <div class="meta">
-          <span class="chip">${e.reps}</span>
-          ${e.rest?`<span class="chip">Repos ${e.rest}s</span>`:""}
-        </div>
-        <div class="series">${bubbles}</div>
-      </section>`;
-  }).join("");
-  bindSeriesButtons();
-}
-
-function bindSeriesButtons(){
-  document.querySelectorAll(".bubble").forEach(b=>{
-    b.onclick = ()=>{
-      const key=b.dataset.key, i=+b.dataset.i;
-      const arr = exState[key]||[];
-      const wasDone = arr.includes(i);
-      if(wasDone){
-        exState[key]=arr.filter(x=>x!==i);
-        b.classList.remove("done");
-        addXP(-5);
-      }else{
-        arr.push(i); exState[key]=arr;
-        b.classList.add("done");
-        addXP(5);
-        autoTimerFor(key,i);
-      }
-      localStorage.setItem("exState", JSON.stringify(exState));
-    };
-  });
-}
-
-/* ---------- Minuteur ---------- */
-let tInt=null, tRem=0;
-function startTimer(sec){
-  clearInterval(tInt);
-  tRem = sec; showTime();
-  tInt = setInterval(()=>{
-    tRem--; showTime();
-    if(tRem<=0){ clearInterval(tInt); navigator.vibrate?.([60]); $("#timerShow").textContent="Terminé"; }
-  },1000);
-}
-function showTime(){
-  const m = String(Math.floor(tRem/60)).padStart(2,"0");
-  const s = String(tRem%60).padStart(2,"0");
-  $("#timerShow").textContent = `${m}:${s}`;
-}
-function autoTimerFor(key,i){
-  const D = Object.values(program).flatMap(d=>d.exos);
-  const found = D.find(ex=>`d${day}-${ex.id}`===key);
-  if(found?.rest){ startTimer(found.rest); }
-}
-$("#startTimer").onclick=()=>startTimer(+$("#restInput").value||60);
-
-/* ---------- XP ---------- */
-function addXP(v){
-  xpState.xp = Math.max(0, (xpState.xp||0) + v);
-  localStorage.setItem("xpState", JSON.stringify(xpState));
-  $("#xpNum").textContent = xpState.xp;
-  $("#xpf").style.width = Math.min(100, (xpState.xp%100))+"%";
-}
-$("#xpNum").textContent = xpState.xp; $("#xpf").style.width = Math.min(100, (xpState.xp%100))+"%";
-
-/* ---------- Courses & prix ---------- */
-function renderGroceries(){
-  const items = groceryState.items || baseGroceries();
-  const checks = groceryState.checks || {};
-  const showEdit = editingPrices;
-
-  $("#glist").innerHTML = items.map((it,idx)=>{
-    const id="g"+idx, checked = !!checks[it.k];
-    return `
-      <div class="row">
-        <label>
-          <input type="checkbox" data-k="${it.k}" ${checked?"checked":""}/>
-          <span>${it.k}</span>
-        </label>
-        <div class="price">
-          ${showEdit?`<input type="number" step="0.01" class="mini" data-pk="${it.k}" value="${it.est??0}"> €`:`≈ ${Number(it.est??0).toFixed(2)} €`}
-        </div>
-      </div>`;
-  }).join("");
-
-  // total
-  const total = items.reduce((s,it)=> s + ((groceryState.checks?.[it.k])? (Number(it.est)||0) : 0), 0);
-  $("#gtotal").textContent = `Total ≈ ${total.toFixed(2)} €`;
-
-  // binds
-  $("#glist input[type=checkbox]").forEach?.(()=>{});
-  document.querySelectorAll("#glist input[type=checkbox]").forEach(cb=>{
-    cb.onchange=()=>{
-      groceryState.checks = groceryState.checks||{};
-      groceryState.checks[cb.dataset.k] = cb.checked;
-      localStorage.setItem("grocery", JSON.stringify(groceryState));
-      renderGroceries();
-    }
-  });
-  document.querySelectorAll("#glist input[type=number]").forEach(inp=>{
-    inp.oninput=()=>{
-      const k=inp.dataset.pk;
-      const items = groceryState.items || baseGroceries();
-      const it = items.find(x=>x.k===k);
-      it.est = +inp.value;
-      groceryState.items = items;
-      localStorage.setItem("grocery", JSON.stringify(groceryState));
-      renderGroceries();
-    }
-  });
-}
-$("#toggleEdit").onclick=()=>{ editingPrices=!editingPrices; renderGroceries(); }
-$("#loadFR").onclick=()=>{ groceryState.items = baseGroceries(); localStorage.setItem("grocery", JSON.stringify(groceryState)); renderGroceries(); }
-
-/* ---------- Check-in ---------- */
-$("#saveCK").onclick=()=>{
-  const txt=$("#ck").value.trim();
-  if(!txt){ $("#ckInfo").textContent="Rien à enregistrer."; return; }
-  const d = new Date().toISOString().slice(0,10);
-  ckState[d]=txt;
-  localStorage.setItem("ckState", JSON.stringify(ckState));
-  $("#ckInfo").innerHTML=`<span class="ok">Enregistré pour ${d}</span>`;
-}
-
-/* ---------- Export ---------- */
-$("#doExport").onclick=()=>{
-  const data = { exState, ckState, xpState, groceryState, version:"1.2+" };
-  const blob = new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href=url; a.download="sante-changement-data.json"; a.click();
-  setTimeout(()=>URL.revokeObjectURL(url), 2000);
-  $("#expInfo").textContent="— export OK";
-}
-
-/* ---------- Navigation ---------- */
-function switchView(id){
-  ["jour","focus","courses","timer","checkin","badges","supps","export"].forEach(v=>{
-    const el = $("#view-"+v); if(!el) return;
-    if(v===id) el.classList.remove("hide"); else el.classList.add("hide");
-  });
-  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-  document.querySelector(`.tab[data-go="${id}"]`)?.classList.add("active");
-}
-document.querySelectorAll("[data-go]").forEach(t=> t.onclick=()=> switchView(t.dataset.go) );
-
-document.querySelectorAll("#dayTabs .tab").forEach(b=>{
-  b.onclick=()=>{ document.querySelectorAll("#dayTabs .tab").forEach(x=>x.classList.remove("active")); b.classList.add("active"); day=+b.dataset.day; renderDay(); }
+/* ===== NAV ===== */
+const nav=document.getElementById('nav');
+const btns=[...nav.querySelectorAll('button')];
+const days=[...document.querySelectorAll('.day')];
+nav.addEventListener('click',e=>{
+  if(e.target.tagName!=='BUTTON')return;
+  const d=e.target.getAttribute('data-day');
+  btns.forEach(b=>b.classList.toggle('active',b===e.target));
+  days.forEach(sec=>sec.hidden = sec.getAttribute('data-day')!==d);
+  try{ e.target.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'}); }catch{}
+  window.scrollTo({ top: 0 });
 });
 
-/* ---------- Réinit jour ---------- */
-function resetToday(){
-  const keys = program[day].exos.map(e=>`d${day}-${e.id}`);
-  keys.forEach(k=> delete exState[k]);
-  localStorage.setItem("exState", JSON.stringify(exState));
-  renderDay();
+/* ===== HUD / XP ===== */
+function getDB(){ try{return JSON.parse(localStorage.getItem('xpdb_v1')||'{}')}catch{return{}} }
+function setDB(db){ localStorage.setItem('xpdb_v1', JSON.stringify(db)) }
+function addXP(amount){
+  const db=getDB();
+  db.xp=Math.max(0,(db.xp||0)+amount);
+  const today=new Date(); const dstr=today.toISOString().slice(0,10);
+  if(amount>0){ // on incrémente la streak/lastAction uniquement sur action positive
+    if(db.lastActionDate!==dstr){
+      const y=new Date(today); y.setDate(today.getDate()-1);
+      const ystr=y.toISOString().slice(0,10);
+      db.streak = (db.lastActionDate===ystr)? (db.streak||0)+1 : 1;
+      db.lastActionDate=dstr;
+      checkBadges();
+    }
+  }
+  setDB(db); renderHUD();
+}
+function renderHUD(){ const db=getDB(); const xp=db.xp||0; const lvl=Math.floor(xp/100)+1; const pct=(xp%100); document.getElementById('level').textContent=lvl; document.getElementById('xpfill').style.width=`${pct}%`; document.getElementById('streak').textContent=db.streak||0; }
+renderHUD();
+
+/* ===== SÉRIES (persistantes) — XP ±5 selon coche/décoche ===== */
+function renderSets(){
+  document.querySelectorAll('.sets').forEach(box=>{
+    const n=+box.dataset.sets||3;
+    const key=box.dataset.key;
+    const saved=(localStorage.getItem(key)||'').split('').map(x=>x==='1');
+    box.innerHTML='';
+    for(let i=0;i<n;i++){
+      const lbl=document.createElement('label'); lbl.className='chk';
+      const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!!saved[i];
+      cb.addEventListener('change',()=>{
+        const arr=[...box.querySelectorAll('input')].map(x=>x.checked?'1':'0');
+        localStorage.setItem(key,arr.join(''));
+        addXP(cb.checked?+5:-5); // <- correction
+        if(cb.checked){ unlock('series10'); unlock('series100'); }
+      });
+      const span=document.createElement('span'); span.textContent=`S${i+1}`;
+      lbl.appendChild(cb); lbl.appendChild(span); box.appendChild(lbl);
+    }
+  });
+}
+renderSets();
+
+document.getElementById('btnReset').addEventListener('click',()=>{
+  const current = btns.find(b=>b.classList.contains('active')).getAttribute('data-day');
+  document.querySelectorAll(`section.day[data-day="${current}"] .sets`).forEach(box=>{
+    localStorage.removeItem(box.dataset.key);
+  });
+  renderSets(); alert('Séries réinitialisées pour le jour affiché.');
+});
+
+/* ===== DONUTS MACROS ===== */
+function createDonut(el){
+  const P=+el.dataset.p, L=+el.dataset.l, G=+el.dataset.g, K=el.dataset.k;
+  const tot=Math.max(P+L+G,1);
+  const p=Math.round(P/tot*100), l=Math.round(L/tot*100), g=100-p-l, C=2*Math.PI*50;
+  const svg=`
+    <svg viewBox="0 0 120 120" width="110" height="110" aria-hidden="true">
+      <circle cx="60" cy="60" r="50" stroke="#0c1330" stroke-width="16" fill="none"/>
+      <g transform="rotate(-90 60 60)">
+        <circle cx="60" cy="60" r="50" stroke="#60a5fa" stroke-width="16" fill="none" stroke-dasharray="${(p/100)*C} ${C}" stroke-dashoffset="0"/>
+        <circle cx="60" cy="60" r="50" stroke="#f472b6" stroke-width="16" fill="none" stroke-dasharray="${(l/100)*C} ${C}" stroke-dashoffset="-${(p/100)*C}"/>
+        <circle cx="60" cy="60" r="50" stroke="#fbbf24" stroke-width="16" fill="none" stroke-dasharray="${(g/100)*C} ${C}" stroke-dashoffset="-${((p+l)/100)*C}"/>
+      </g>
+    </svg>`;
+  el.innerHTML = svg + `<div class="mid">${K}<br><span style="font-size:11px;color:#bcd0ff">kcal</span></div>`;
+  const tile = el.closest('.tile');
+  if(tile && !tile.dataset.legended){
+    const legend = document.createElement('div');
+    legend.className='legend';
+    legend.innerHTML=`<span class="swatch p">P ${P} g</span><span class="swatch l">L ${L} g</span><span class="swatch g">G ${G} g</span>`;
+    tile.after(legend); tile.dataset.legended="1";
+  }
+}
+document.querySelectorAll('.donut').forEach(createDonut);
+
+/* ===== MODALES ===== */
+function openModal(m){
+  m.classList.add('open'); m.setAttribute('aria-hidden','false');
+  document.body.dataset.modalOpen = "1";
+}
+function closeModal(m){
+  m.classList.remove('open'); m.setAttribute('aria-hidden','true');
+  if (![...document.querySelectorAll('.modal')].some(el=>el.classList.contains('open'))){
+    delete document.body.dataset.modalOpen;
+  }
+}
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ document.querySelectorAll('.modal.open').forEach(closeModal) }});
+
+/* ===== COMPLÉMENTS ===== */
+const modalSupp=document.getElementById('modalSupp');
+document.getElementById('btnSupp').addEventListener('click',()=>openModal(modalSupp));
+document.getElementById('closeSupp').addEventListener('click',()=>closeModal(modalSupp));
+modalSupp.addEventListener('click',e=>{if(e.target===modalSupp) closeModal(modalSupp)});
+
+/* ===== MINUTEUR ===== */
+const modalTimer=document.getElementById('modalTimer');
+const tDisplay=document.getElementById('tDisplay');
+let tRemaining=0, tHandle=null;
+function fmt(s){const m=Math.floor(s/60), r=s%60; return `${String(m).padStart(2,'0')}:${String(r).padStart(2,'0')}`}
+function setTime(s){tRemaining=s; tDisplay.textContent=fmt(s)}
+function tick(){
+  if(tRemaining<=0){ clearInterval(tHandle); tHandle=null; try{navigator.vibrate&&navigator.vibrate([120,80,120]);}catch{} tDisplay.textContent='00:00'; return; }
+  tRemaining--; tDisplay.textContent=fmt(tRemaining);
+}
+document.getElementById('btnTimer').addEventListener('click',()=>{ setTime(60); openModal(modalTimer); });
+document.getElementById('closeTimer').addEventListener('click',()=>{ closeModal(modalTimer); if(tHandle){clearInterval(tHandle);tHandle=null;} });
+modalTimer.addEventListener('click',e=>{ if(e.target===modalTimer){ closeModal(modalTimer); if(tHandle){clearInterval(tHandle);tHandle=null;} }});
+document.querySelectorAll('.tbtn[data-sec]').forEach(b=>b.addEventListener('click',()=>setTime(+b.dataset.sec)));
+document.getElementById('tStart').addEventListener('click',()=>{ if(tHandle) clearInterval(tHandle); tHandle=setInterval(tick,1000) });
+document.getElementById('tStop').addEventListener('click',()=>{ if(tHandle){clearInterval(tHandle);tHandle=null;} });
+
+/* ===== BADGES ===== */
+const modalBadges=document.getElementById('modalBadges');
+document.getElementById('btnBadges').addEventListener('click',()=>{ renderBadges(); openModal(modalBadges); });
+document.getElementById('closeBadges').addEventListener('click',()=>closeModal(modalBadges));
+modalBadges.addEventListener('click',e=>{ if(e.target===modalBadges) closeModal(modalBadges) });
+function unlock(id){ const db=getDB(); db.badges=db.badges||{}; db.badges[id]=true; setDB(db) }
+function have(id){ const db=getDB(); return db.badges&&db.badges[id] }
+function checkBadges(){
+  const db=getDB();
+  const ci=JSON.parse(localStorage.getItem('checkins_v1')||'{}'); if(Object.keys(ci).length>0) unlock('firstcheck');
+  let total=0; Object.keys(localStorage).forEach(k=>{ if(k.startsWith('d')&&k.includes('-')){ const v=localStorage.getItem(k)||''; total+=v.split('').filter(x=>x==='1').length }});
+  if(total>=10) unlock('series10'); if(total>=100) unlock('series100');
+  if((db.streak||0)>=3) unlock('streak3'); if((db.streak||0)>=7) unlock('streak7');
+  setDB(db);
+}
+function badgeCard(ok,title,desc){ return `<div class="card" style="opacity:${ok?1:.45}"><h3>${ok?'🏅':'🔒'} ${title}</h3><p class="note" style="margin:6px 0 0">${desc}</p></div>`}
+function renderBadges(){
+  checkBadges();
+  const list=document.getElementById('badgesList');
+  list.innerHTML=[
+    badgeCard(have('firstcheck'),'Premier check-in','Tu as enregistré au moins une journée.'),
+    badgeCard(have('series10'),'10 séries cochées','Tu as validé 10 séries.'),
+    badgeCard(have('series100'),'100 séries cochées','Tu as validé 100 séries.'),
+    badgeCard(have('streak3'),'Flamme 3 jours','3 jours d’affilée.'),
+    badgeCard(have('streak7'),'Flamme 7 jours','7 jours d’affilée.')
+  ].join('');
 }
 
-/* ---------- Init ---------- */
-renderDay(); renderGroceries();
+/* ===== CHECK-IN ===== */
+const d=document;
+const ci_date=d.getElementById('ci_date');
+const ci_weight=d.getElementById('ci_weight');
+const ci_sleep=d.getElementById('ci_sleep'), ci_sleep_v=d.getElementById('ci_sleep_v');
+const ci_energy=d.getElementById('ci_energy'), ci_energy_v=d.getElementById('ci_energy_v');
+const ci_mood=d.getElementById('ci_mood'), ci_mood_v=d.getElementById('ci_mood_v');
+const ci_steps=d.getElementById('ci_steps');
+const ci_perf=d.getElementById('ci_perf');
+const ci_food=d.getElementById('ci_food');
+const ci_done=d.getElementById('ci_done');
+const ci_obst=d.getElementById('ci_obst');
+const ci_plan=d.getElementById('ci_plan');
+const ci_table=d.getElementById('ci_table')?.querySelector('tbody');
+const ci_window=document.getElementById('ci_window');
+function todayStr(){ const t=new Date(); const z=t.getTimezoneOffset()*60000; return new Date(Date.now()-z).toISOString().slice(0,10) }
+function inWindow(){ const h=(new Date()).getHours(); return h>=20 && h<22 }
+function loadStore(){ try{ return JSON.parse(localStorage.getItem('checkins_v1')||'{}'); }catch{ return {}; } }
+function saveStore(obj){ localStorage.setItem('checkins_v1', JSON.stringify(obj)); }
+function fillForm(entry){ ci_weight.value=entry.weight||''; ci_sleep.value=entry.sleep??0; ci_sleep_v.textContent=ci_sleep.value; ci_energy.value=entry.energy??0; ci_energy_v.textContent=ci_energy.value; ci_mood.value=entry.mood??0; ci_mood_v.textContent=ci_mood.value; ci_steps.value=entry.steps||''; ci_perf.value=entry.perf||''; ci_food.value=entry.food||''; ci_done.value=entry.done||''; ci_obst.value=entry.obst||''; ci_plan.value=entry.plan||''; }
+function formToEntry(){ return {date: ci_date.value, weight: ci_weight.value, sleep:+ci_sleep.value, energy:+ci_energy.value, mood:+ci_mood.value, steps: ci_steps.value, perf: ci_perf.value, food: ci_food.value, done: ci_done.value, obst: ci_obst.value, plan: ci_plan.value }; }
+function renderTable(){ if(!ci_table) return; const db=loadStore(); const dates=Object.keys(db).sort().reverse(); ci_table.innerHTML=''; dates.forEach(dt=>{ const e=db[dt]; const tr=d.createElement('tr'); tr.innerHTML=`<td>${dt}</td><td>${e.sleep??''}</td><td>${e.energy??''}</td><td>${e.mood??''}</td><td>${e.weight??''}</td><td>${e.steps??''}</td><td>${(e.perf||'').replace(/\n/g,' / ')}</td><td>${(e.food||'').replace(/\n/g,' / ')}</td><td>${(e.done||'').replace(/\n/g,' / ')}</td><td>${(e.obst||'').replace(/\n/g,' / ')}</td><td>${(e.plan||'').replace(/\n/g,' / ')}</td>`; ci_table.appendChild(tr); }); }
+function toCSV(db){ const head=['date','sleep','energy','mood','weight','steps','perf','food','done','obst','plan']; const rows=[head.join(',')]; Object.keys(db).sort().forEach(dt=>{ const e=db[dt]; const row=head.map(k=>`"${(e[k]??'').toString().replace(/"/g,'""').replace(/\n/g,' / ')}"`).join(','); rows.push(row); }); return rows.join('\n'); }
+function download(filename, text){ const blob=new Blob([text], {type: 'text/plain;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=d.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }
+function copySummary(){ const e=formToEntry(); const line = `Sommeil ${e.sleep} | Énergie ${e.energy} | Humeur ${e.mood} | Poids ${e.weight} kg | Perfs gym ${e.perf} | Alimentation ${e.food} | Pas du jour ${e.steps} | Étapes accomplies ${e.done} | Obstacles rencontrés ${e.obst} | Plan pour demain ${e.plan}.`; navigator.clipboard.writeText(line).then(()=>alert('Résumé copié.')).catch(()=>{ const ta=d.createElement('textarea'); ta.value=line; d.body.appendChild(ta); ta.select(); d.execCommand('copy'); d.body.removeChild(ta); alert('Résumé copié.')}); }
+(function initCI(){ const dateEl=d.getElementById('ci_date'); if(!dateEl) return; dateEl.value = todayStr(); ci_sleep_v.textContent=ci_sleep.value; ci_energy_v.textContent=ci_energy.value; ci_mood_v.textContent=ci_mood.value; const db=loadStore(); if(db[dateEl.value]) fillForm(db[dateEl.value]); renderTable(); function updWin(){ ci_window.textContent = inWindow()? 'Fenêtre OUVERTE (20–22 h)': 'Fenêtre fermée (remplis si besoin)'; } updWin(); setInterval(updWin, 60000); })();
+d.getElementById('ci_save')?.addEventListener('click', ()=>{ const db=loadStore(); const entry=formToEntry(); if(!entry.date){ alert('Choisis une date.'); return; } db[entry.date]=entry; saveStore(db); renderTable(); alert('Check-in enregistré.'); addXP(25); unlock('firstcheck'); checkBadges(); });
+d.getElementById('ci_copy')?.addEventListener('click', copySummary);
+d.getElementById('ci_export_csv')?.addEventListener('click', ()=>{ download('checkins.csv', toCSV(loadStore())); });
+d.getElementById('ci_export_json')?.addEventListener('click', ()=>{ download('checkins.json', JSON.stringify(loadStore(), null, 2)); });
+d.getElementById('ci_delete')?.addEventListener('click', ()=>{ const dt=ci_date.value; if(!dt) return; const db=loadStore(); delete db[dt]; saveStore(db); if(dt===todayStr()) fillForm({}); renderTable(); alert('Entrée supprimée.'); });
 
-/* ---------- PWA ---------- */
-if("serviceWorker" in navigator){ navigator.serviceWorker.register("./service-worker.js"); }
+/* ===== FOCUS SÉANCE ===== */
+const modalFocus=document.getElementById('modalFocus');
+const fDay=document.getElementById('fDay');
+const fBody=document.getElementById('fBody');
+let FCTX=null;
+function currentDaySection(){ const b=btns.find(b=>b.classList.contains('active')); return document.querySelector(`section.day[data-day="${b.getAttribute('data-day')}"]`) }
+function buildFocusFromDay(){
+  const sec=currentDaySection(); const dayLabel=btns.find(b=>b.classList.contains('active')).textContent;
+  if(!sec) return null;
+  const exos=[...sec.querySelectorAll('.grid .card:first-child .exo')].map(ex=>{
+    const name=ex.querySelector('h3')?.textContent.replace('ⓘ','').trim()||'Exercice';
+    const meta=ex.querySelector('.meta')?.textContent||'';
+    const sets=+ex.querySelector('.sets')?.dataset.sets||3;
+    const key=ex.querySelector('.sets')?.dataset.key||('key-'+name);
+    const tips=ex.querySelector('details')?.outerHTML||'';
+    return {name, meta, sets, key, tips};
+  });
+  return {dayLabel, exos, idx:0};
+}
+function getSetState(key, n){ const s=(localStorage.getItem(key)||'').split(''); const arr=[]; for(let i=0;i<n;i++) arr.push(s[i]==='1'); return arr }
+function setSetState(key, arr){ localStorage.setItem(key, arr.map(x=>x?'1':'0').join('')); renderSets(); }
+function focusRender(){
+  if(!FCTX){ fBody.innerHTML='<p class="note">Aucun exercice trouvé.</p>'; return; }
+  const ex=FCTX.exos[FCTX.idx];
+  const doneArr=getSetState(ex.key, ex.sets);
+  const doneCount=doneArr.filter(Boolean).length;
+  fDay.textContent = `Jour ${btns.find(b=>b.classList.contains('active')).textContent} — Exercice ${FCTX.idx+1}/${FCTX.exos.length}`;
+  fBody.innerHTML=`
+    <h3 class="focusTitle">${ex.name}</h3>
+    <div class="focusMeta">${ex.meta}</div>
+    ${ex.tips||''}
+    <div class="fSet" id="fSet"></div>
+    <div class="progress">Séries : <b>${doneCount}</b> / ${ex.sets}</div>
+    <div class="focusTimer">
+      <span class="small">Repos rapide :</span>
+      <button data-sec="30">30s</button>
+      <button data-sec="60">60s</button>
+      <button data-sec="90">90s</button>
+      <button id="fNextSet">Valider une série</button>
+    </div>
+    <div class="fNav" style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:10px">
+      <button class="btn" id="fPrev">← Précédent</button>
+      <button class="btn" id="fResetExo">Réinitialiser l’exercice</button>
+      <button class="btn" id="fNext">${doneCount===ex.sets?'Suivant →':'Suivant (après séries)'}</button>
+    </div>
+  `;
+  const holder=d.getElementById('fSet');
+  for(let i=0;i<ex.sets;i++){
+    const b=d.createElement('div'); b.className='bubble'+(doneArr[i]?' done':''); b.textContent=i+1;
+    b.addEventListener('click',()=>{ const newVal=!doneArr[i]; doneArr[i]=newVal; setSetState(ex.key,doneArr); addXP(newVal?+5:-5); });
+    holder.appendChild(b);
+  }
+  d.getElementById('fPrev').onclick=()=>{ if(FCTX.idx>0){FCTX.idx--; focusRender();} }
+  d.getElementById('fNext').onclick=()=>{ if(doneArr.every(Boolean) && FCTX.idx<FCTX.exos.length-1){FCTX.idx++; focusRender();} else if(!doneArr.every(Boolean)){ alert('Valide toutes les séries avant de passer au suivant.'); } else { closeModal(modalFocus); alert('Séance terminée. GG !'); } }
+  d.getElementById('fResetExo').onclick=()=>{ setSetState(ex.key, new Array(ex.sets).fill(false)); focusRender(); }
+  fBody.querySelectorAll('.focusTimer button[data-sec]').forEach(b=>b.addEventListener('click',()=>{ setTime(+b.dataset.sec); openModal(modalTimer); }));
+  d.getElementById('fNextSet').onclick=()=>{
+    const i=doneArr.findIndex(v=>!v);
+    if(i>-1){ doneArr[i]=true; setSetState(ex.key,doneArr); addXP(5); focusRender(); }
+    else { try{navigator.vibrate&&navigator.vibrate([100,60,100]);}catch{} }
+  }
+}
+document.getElementById('btnFocus').addEventListener('click',()=>{
+  FCTX=buildFocusFromDay();
+  openModal(modalFocus);
+  focusRender();
+});
+document.getElementById('closeFocus').addEventListener('click',()=>closeModal(modalFocus));
+modalFocus.addEventListener('click',e=>{ if(e.target===modalFocus) closeModal(modalFocus) });
+
+/* ===== COURSES + PRIX ===== */
+const modalGroceries=document.getElementById('modalGroceries');
+document.getElementById('btnGroceries').addEventListener('click',()=>{ renderGroceries(); openModal(modalGroceries); });
+document.getElementById('closeGroceries').addEventListener('click',()=>closeModal(modalGroceries));
+modalGroceries.addEventListener('click',e=>{ if(e.target===modalGroceries) closeModal(modalGroceries) });
+
+const gListEl=document.getElementById('gList');
+const gTravel=document.getElementById('gTravel');
+const gKey='groceries_v1';
+const gStateKey='groceries_state_v1';
+const gPriceKey='groceries_prices_v1';
+let gEdit=false;
+
+function baseGroceries(){
+  const travel = gTravel.checked;
+  return [
+    {cat:'Protéines', items:[
+      {id:'poulet', label:'Poulet filets', qty:'1.2 kg (6×200 g)', price:10.50},
+      {id:'dinde', label:'Dinde (tranches/cuisson)', qty:'400–600 g', price:5.00},
+      {id:'boeuf5', label:'Bœuf 5% (chili)', qty:'600 g', price:9.20},
+      {id:'oeufs', label:'Œufs', qty:'12', price:3.20},
+      {id:'yaourt', label:'Yaourt grec 0% / Skyr', qty:'1 kg', price:3.50},
+      {id:'fromageblanc', label:'Fromage blanc 0%', qty:'1 kg', price:2.80},
+      {id:'whey', label:'Whey', qty:'1 pot', price:24.00}
+    ]},
+    {cat:'Féculents & légumineuses', items:[
+      {id:'riz', label:'Riz basmati', qty:'1 kg', price:2.20},
+      {id:'pates', label:'Pâtes complètes', qty:'500 g', price:1.30},
+      {id:'tortillas', label:'Tortillas complètes', qty:'8 pcs', price:2.30},
+      {id:'avoine', label:'Flocons d’avoine', qty:'500 g', price:1.30},
+      {id:'haricots', label:'Haricots rouges (boîte)', qty:'2×400 g', price:2.00}
+    ]},
+    {cat:'Légumes & fruits', items:[
+      {id:'salade', label:'Salade verte', qty:'1–2 pièces', price:2.50},
+      {id:'tomates', label:'Tomates', qty:'6', price:2.50},
+      {id:'concombre', label:'Concombre', qty:'1–2', price:1.40},
+      {id:'mais', label:'Maïs (boîte)', qty:'2×140 g', price:1.80},
+      {id:'oignons', label:'Oignons', qty:'3–4', price:1.20},
+      {id:'citron', label:'Citron', qty:'2–3', price:1.20},
+      {id:'avocat', label:'Avocat (option)', qty:'2', price:2.80},
+      {id:'surgeles', label:'Mélange légumes surgelés', qty:'1–2 kg', price:3.50},
+      {id:'bananes', label:'Bananes', qty:'6', price:1.80},
+      {id:'pommes', label:'Pommes', qty:'6', price:2.50}
+    ]},
+    {cat:'Épicerie & condiments', items:[
+      {id:'yaourt0', label:'Yaourt 0% (sauces)', qty:'6×125 g', price:2.20},
+      {id:'epices', label:'Paprika, ail, cumin, chili', qty:'assortiment', price:3.00},
+      {id:'selpoivre', label:'Sel, poivre', qty:'—', price:1.00},
+      {id:'huile', label:'Huile d’olive', qty:'750 ml', price:7.90}
+    ]},
+    {cat:'Snacks utiles', items:[
+      {id:'galettes', label:'Galettes de riz', qty:'1 paquet', price:1.50},
+      {id:'noix', label:'Noix/amandes', qty:'200 g', price:3.50},
+      {id:'fruits', label:'Fruits portables', qty:'bananes/pommes', price:3.00}
+    ]},
+    {cat:'Compléments', items:[
+      {id:'creatine', label:'Créatine monohydrate', qty:'500 g', price:16.00},
+      {id:'omega3', label:'Oméga-3', qty:'1 flacon', price:14.00},
+      {id:'vitd3', label:'Vitamine D3', qty:'1 flacon', price:9.00},
+      {id:'mag', label:'Magnésium (glycinate)', qty:'1 boîte', price:12.00},
+      {id:'collagene', label:'Collagène', qty:'300–500 g', price:20.00}
+    ]},
+    ...(travel ? [{
+      cat:'+ Mode déplacement (ajouts)',
+      items:[
+        {id:'rizmicro', label:'Riz micro-ondes 2–3 min', qty:'3 sachets', price:3.60},
+        {id:'saucetomate', label:'Sauce tomate (brique)', qty:'2×500 g', price:2.40},
+        {id:'wrapkit', label:'Kit wraps (tortillas + crudités)', qty:'2–3 repas', price:7.00},
+        {id:'proteinesec', label:'Jambon de dinde sous vide', qty:'300–400 g', price:3.50}
+      ]
+    }]:[])
+  ];
+}
+function loadGState(){ try{return JSON.parse(localStorage.getItem(gStateKey)||'{}')}catch{return{}} }
+function saveGState(s){ localStorage.setItem(gStateKey, JSON.stringify(s)) }
+function loadPrices(){ try{return JSON.parse(localStorage.getItem(gPriceKey)||'{}')}catch{return{}} }
+function savePrices(p){ localStorage.setItem(gPriceKey, JSON.stringify(p)) }
+
+function renderGroceries(){
+  const state=loadGState(); gTravel.checked=!!state.travel;
+  const data=baseGroceries();
+  const checked=JSON.parse(localStorage.getItem(gKey)||'{}');
+  const prices=loadPrices();
+  gListEl.innerHTML='';
+  let total=0;
+
+  data.forEach(block=>{
+    const wrap=document.createElement('div'); wrap.className='gcat';
+    wrap.innerHTML=`<h3>${block.cat}</h3>`;
+    block.items.forEach(it=>{
+      const id=`g-${it.id}`;
+      const price = (prices[it.id] ?? it.price ?? 0);
+      const row=document.createElement('div'); row.className='item';
+      row.innerHTML=`
+        <label><input type="checkbox" id="${id}"><span>${it.label} <span class="qty">(${it.qty})</span></span></label>
+        <div class="price">
+          ${gEdit ? `<input class="edit" type="number" step="0.01" data-id="${it.id}" value="${price.toFixed(2)}"> €`
+                  : `≈ ${price.toFixed(2)} €`}
+        </div>`;
+      const cb=row.querySelector('input'); cb.checked=!!checked[it.id];
+      cb.addEventListener('change',()=>{ checked[it.id]=cb.checked; localStorage.setItem(gKey, JSON.stringify(checked)); renderGroceries(); });
+      // prix éditable
+      const inp=row.querySelector('input.edit');
+      if(inp){ inp.addEventListener('input',()=>{ prices[it.id]=+inp.value||0; savePrices(prices); }); }
+      wrap.appendChild(row);
+      if(cb.checked) total += Number(price)||0;
+    });
+    gListEl.appendChild(wrap);
+  });
+  document.getElementById('gTotal').innerHTML = `<b>Total estimé :</b> ${total.toFixed(2)} €`;
+}
+document.getElementById('gEdit').addEventListener('click',()=>{ gEdit=!gEdit; renderGroceries(); });
+gTravel.addEventListener('change',()=>{ const s=loadGState(); s.travel=gTravel.checked; saveGState(s); renderGroceries(); });
+document.getElementById('gAll').addEventListener('click',()=>{ const data=baseGroceries(); const obj={}; data.forEach(b=>b.items.forEach(i=>obj[i.id]=true)); localStorage.setItem(gKey, JSON.stringify(obj)); renderGroceries(); });
+document.getElementById('gNone').addEventListener('click',()=>{ localStorage.setItem(gKey, JSON.stringify({})); renderGroceries(); });
+document.getElementById('gCopy').addEventListener('click',()=>{ const lines=[]; gListEl.querySelectorAll('.gcat').forEach(cat=>{ const title=cat.querySelector('h3').textContent; const items=[...cat.querySelectorAll('.item')].filter(i=>i.querySelector('input[type=checkbox]').checked).map(i=>'- '+i.querySelector('label').innerText.trim()); if(items.length){ lines.push(title); lines.push(...items,''); } }); const txt=lines.join('\n'); navigator.clipboard.writeText(txt).then(()=>alert('Liste copiée.')); });
+document.getElementById('gExport').addEventListener('click',()=>{ const lines=[]; gListEl.querySelectorAll('.gcat').forEach(cat=>{ const title=cat.querySelector('h3').textContent; const items=[...cat.querySelectorAll('.item')].filter(i=>i.querySelector('input[type=checkbox]').checked).map(i=>'- '+i.querySelector('label').innerText.trim()); if(items.length){ lines.push(title); lines.push(...items,''); } }); const txt=lines.join('\n'); const blob=new Blob([txt],{type:'text/plain;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=d.createElement('a'); a.href=url; a.download='courses.txt'; a.click(); URL.revokeObjectURL(url); });
+
+/* ===== PWA: SW ===== */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(console.error);
+  });
+}
+
+/* ===== INIT ===== */
+renderGroceries();
+
+/* ===== CHECK-IN INIT fenêtre ===== */
+(function(){ const ci_window=document.getElementById('ci_window'); function upd(){ const h=(new Date()).getHours(); ci_window.textContent = (h>=20 && h<22)? 'Fenêtre OUVERTE (20–22 h)': 'Fenêtre fermée (remplis si besoin)'; } upd(); setInterval(upd,60000); })();
 </script>
 </body>
 </html>
