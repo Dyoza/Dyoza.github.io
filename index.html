@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>Programme Hebdo v1.6.3 — Header Fixe + PWA</title>
+<title>Programme Hebdo v1.6.4 — En-tête statique + PWA</title>
 
 <!-- PWA -->
 <link rel="manifest" href="manifest.webmanifest">
@@ -17,23 +17,21 @@
   --bg:#0e1224; --ink:#eef2ff; --muted:#a5b4fc; --card:#121735; --panel:#161d44; --border:#26306b;
   --accent:#7dd3fc; --ok:#22c55e; --warn:#f59e0b; --danger:#ef4444;
   --ring:0 0 0 2px rgba(125,211,252,.45);
-  --appbar-h: 84px; /* recalculée dynamiquement */
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:linear-gradient(180deg,#0e1224,#0a0f21 70%);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
 a{color:inherit}
 
-/* === EN-TÊTE FIXE (simple & robuste) === */
+/* === EN-TÊTE STATIQUE (défile avec la page) === */
 header.sticky{
-  position: fixed; top:0; left:0; right:0; width:100%;
-  z-index:1000;
+  position: static; /* <- clé : rien de fixe */
+  z-index: 10;
   background:rgba(14,18,36,.85);
   backdrop-filter:saturate(1.1) blur(8px);
   border-bottom:1px solid rgba(255,255,255,.07);
   padding-top: env(safe-area-inset-top);
-  transform: translateZ(0); /* solidifie sur iOS */
 }
-body{ padding-top: var(--appbar-h); } /* évite le chevauchement du contenu */
+body{ padding-top: 0 !important; } /* aucun offset nécessaire */
 
 .wrap{max-width:1100px;margin:0 auto;padding:20px}
 .headbar{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 20px}
@@ -89,10 +87,10 @@ svg{display:block}
 .swatch::before{content:"";width:10px;height:10px;border-radius:2px;display:inline-block}
 .swatch.p::before{background:#60a5fa}.swatch.l::before{background:#f472b6}.swatch.g::before{background:#fbbf24}
 
-/* Modales au-dessus du header + blocage fond */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:18px;z-index:9999;will-change:transform}
+/* Modales au-dessus du contenu + blocage fond */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:18px;z-index:9999}
 .modal.open{display:flex}
-.modal .box{max-width:900px;background:linear-gradient(180deg,#141a3a,#111633);border:1px solid var(--border);border-radius:16px;padding:16px;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.45);position:relative;z-index:10000}
+.modal .box{max-width:900px;background:linear-gradient(180deg,#141a3a,#111633);border:1px solid var(--border);border-radius:16px;padding:16px;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.45);position:relative}
 .mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:880px){.mod-grid{grid-template-columns:1fr}}
 
@@ -172,12 +170,7 @@ svg{display:block}
 
 /* Quand une modale est ouverte, pas de scroll ni clics de fond */
 body[data-modal-open="1"]{overflow:hidden;touch-action:none}
-body[data-modal-open="1"] header.sticky{pointer-events:none}
-/* --- Mode EN-TÊTE STATIQUE (défile avec la page) --- */
-body.static-header header.sticky { position: static; }
-body.static-header { padding-top: 0 !important; } /* supprime l'espace réservé au header fixe */
-
-</>
+</style>
 </head>
 <body>
 <header class="sticky">
@@ -410,7 +403,7 @@ body.static-header { padding-top: 0 !important; } /* supprime l'espace réservé
 </main>
 
 <footer class="wrap">
-  <p>En-tête fixe en permanence. PWA active. Utilise les modales Focus/Minuteur/Courses/Compléments au besoin.</p>
+  <p>En-tête statique. PWA active. Utilise les modales Focus/Minuteur/Courses/Compléments au besoin.</p>
 </footer>
 
 <!-- MODALES -->
@@ -499,7 +492,6 @@ nav.addEventListener('click',e=>{
   const d=e.target.getAttribute('data-day');
   btns.forEach(b=>b.classList.toggle('active',b===e.target));
   days.forEach(sec=>sec.hidden = sec.getAttribute('data-day')!==d);
-  // recentre l'onglet et remonte sous le header fixe
   try{ e.target.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'}); }catch{}
   window.scrollTo({ top: 0 });
 });
@@ -847,22 +839,6 @@ document.getElementById('gNone').addEventListener('click',()=>{ const boxes=[...
 document.getElementById('gCopy').addEventListener('click',()=>{ const lines=[]; gListEl.querySelectorAll('.gcat').forEach(cat=>{ const title=cat.querySelector('h3').textContent; const items=[...cat.querySelectorAll('.item')].filter(i=>i.querySelector('input').checked).map(i=>'- '+i.querySelector('label').textContent.trim()); if(items.length){ lines.push(title); lines.push(...items,''); } }); const txt=lines.join('\n'); navigator.clipboard.writeText(txt).then(()=>alert('Liste copiée.')); });
 document.getElementById('gExport').addEventListener('click',()=>{ const lines=[]; gListEl.querySelectorAll('.gcat').forEach(cat=>{ const title=cat.querySelector('h3').textContent; const items=[...cat.querySelectorAll('.item')].filter(i=>i.querySelector('input').checked).map(i=>'- '+i.querySelector('label').textContent.trim()); if(items.length){ lines.push(title); lines.push(...items,''); } }); const txt=lines.join('\n'); const blob=new Blob([txt],{type:'text/plain;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=d.createElement('a'); a.href=url; a.download='courses.txt'; a.click(); URL.revokeObjectURL(url); });
 
-/* ===== Offset dynamique de l’app-bar (hauteur réelle) ===== */
-(function appbarOffset(){
-  const header = document.querySelector('header.sticky');
-  if(!header) return;
-  function setOffset(){
-    const h = Math.round(header.getBoundingClientRect().height);
-    document.documentElement.style.setProperty('--appbar-h', h + 'px');
-  }
-  const setSoon=()=>setTimeout(setOffset,0);
-  window.addEventListener('load', setSoon, {once:true});
-  window.addEventListener('resize', setSoon);
-  window.addEventListener('orientationchange', setSoon);
-  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) setSoon(); });
-  try{ new ResizeObserver(setOffset).observe(header); }catch{}
-})();
-
 /* ===== PWA: enregistrement SW ===== */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -872,5 +848,3 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
-
-
